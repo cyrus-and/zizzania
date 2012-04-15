@@ -1,0 +1,13 @@
+Dependencies:
+
+    libpcap-dev (>= 1.1.1)
+    libglib2.0-dev (>= 2.24.2)
+
+Install:
+
+    $ make
+    # make install
+
+Uninstall:
+
+    # make uninstall
