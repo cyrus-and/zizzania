@@ -17,13 +17,19 @@ zizzania: dispatcher.o dissectors.o handshake.o main.o zizzania.o
 
 # UTILS ]-----------------------------------------------------------------------
 
-.PHONY: clean cleanall
+.PHONY: clean cleanall install uninstall
 
 clean:
 	rm -fr *.o
 
 cleanall: clean
 	rm -fr ./zizzania
+
+install:
+	cp ./zizzania /usr/bin
+
+uninstall:
+	rm -f /usr/bin/zizzania
 
 # DEPENDENCIES ]----------------------------------------------------------------
 
