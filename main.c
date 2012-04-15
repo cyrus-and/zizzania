@@ -48,7 +48,7 @@ static int parse_options( struct zizzania *z , int argc , char *argv[] )
                 /* parse bssid address */
                 if ( !ieee80211_addr_sscan( bssid , optarg ) )
                 {
-                    sprintf( z->error_buffer , "invalid MAC address '%s'" , optarg );
+                    sprintf( z->error_buffer , "Invalid MAC address '%s'" , optarg );
                     return 0;
                 }
 
@@ -75,11 +75,11 @@ static int parse_options( struct zizzania *z , int argc , char *argv[] )
             break;
 
         case ':':
-            sprintf( z->error_buffer , "missing argument for option '%c'" , optopt );
+            sprintf( z->error_buffer , "Missing argument for option '%c'" , optopt );
             return 0;
 
         default:
-            sprintf( z->error_buffer , "unknown option '%c'" , optopt );
+            sprintf( z->error_buffer , "Unknown option '%c'" , optopt );
             return 0;
         }
     }
@@ -89,49 +89,49 @@ static int parse_options( struct zizzania *z , int argc , char *argv[] )
     /* warn about no input */
     if ( n_input == 0 )
     {
-        strcpy( z->error_buffer , "no input" );
+        strcpy( z->error_buffer , "No input specified, use either -r or -i" );
         return 0;
     }
 
     /* warn about multiple input specified */
     if ( n_input > 1 )
     {
-        strcpy( z->error_buffer , "multiple input specified" );
+        strcpy( z->error_buffer , "Multiple input specified" );
         return 0;
     }
 
     /* warn about multiple output specified */
     if ( n_output > 1 )
     {
-        strcpy( z->error_buffer , "multiple output specified" );
+        strcpy( z->error_buffer , "Multiple output specified" );
         return 0;
     }
 
     /* warn about unparset options */
     if ( optind != argc )
     {
-        sprintf( z->error_buffer , "unparsed option '%s'" , argv[ optind ] );
+        sprintf( z->error_buffer , "Unparsed option '%s'" , argv[ optind ] );
         return 0;
     }
 
     /* warn about nothing to do */
     if ( !z->setup.auto_add_targets && n_target == 0 )
     {
-        strcpy( z->error_buffer , "nothing to do" );
+        strcpy( z->error_buffer , "Specify at least one target BSSID (-b) or force auto mode (-a)" );
         return 0;
     }
 
     /* warn about useless options */
     if ( z->setup.auto_add_targets && n_target > 0 )
     {
-        strcpy( z->error_buffer , "useless options -b with -a" );
+        strcpy( z->error_buffer , "Option -a includes every combination of -b" );
         return 0;
     }
 
     /* warn about passive mode while offline */
     if ( z->setup.passive && !z->setup.live )
     {
-        strcpy( z->error_buffer , "offline sessions are always passive" );
+        strcpy( z->error_buffer , "Offline sessions are always passive there's no need of -n" );
         return 0;
     }
 
