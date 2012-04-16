@@ -12,11 +12,11 @@
     "\x00\x00\x00\x00"         /* present */            \
     /* ieee80211_mac */                                 \
     "\xc0\x00"                 /* frame control */      \
-    "\x3a\x01"                 /* duration */           \
+    "\x00\x00"                 /* duration */           \
     "\x00\x00\x00\x00\x00\x00" /* destination */        \
     "\x00\x00\x00\x00\x00\x00" /* source */             \
     "\x00\x00\x00\x00\x00\x00" /* bssid */              \
-    "\x40\x06"                 /* sequence control */   \
+    "\x00\x00"                 /* sequence control */   \
     "\x07\x00"                 /* reason */
 
 static int zizzania_deauthenticate( struct zizzania *z )
