@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 #define BROADCAST_MAC_ADDRESS "\xff\xff\xff\xff\xff\xff"
-#define IPV4_MULTICAST_MAC_ADDRESS_PFX "\x33\x33"
-#define IPV6_MULTICAST_MAC_ADDRESS_PFX "\x01\x00\x5e"
+#define IPV4_MULTICAST_MAC_ADDRESS_PFX "\x01\x00\x5e"
+#define IPV6_MULTICAST_MAC_ADDRESS_PFX "\x33\x33"
 
 typedef uint8_t *ieee80211_addr_t;
 
