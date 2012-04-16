@@ -49,7 +49,11 @@ void * zizzania_dispatcher( void *arg )
         if ( z->stop == 1 ) break;
 
         /* deauthenticate clients */
-        zizzania_start_killer( z );
+        if ( !zizzania_start_killer( z ) )
+        {
+            z->stop = 1;
+            return ( void * )0;
+        }
     }
 
     return ( void * )1;

@@ -14,6 +14,6 @@ struct zizzania_killer_message
     uint8_t bssid[6];
 };
 
-void zizzania_start_killer( struct zizzania *z );
+int zizzania_start_killer( struct zizzania *z );
 
 #endif

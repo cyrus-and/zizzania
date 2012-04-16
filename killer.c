@@ -19,7 +19,7 @@
     "\x40\x06"                 /* sequence control */   \
     "\x07\x00"                 /* reason */
 
-static void zizzania_deauthenticate( struct zizzania *z )
+static int zizzania_deauthenticate( struct zizzania *z )
 {
     GHashTableIter i;
     const ieee80211_addr_t client_addr;
@@ -40,12 +40,14 @@ static void zizzania_deauthenticate( struct zizzania *z )
         {
             zizzania_set_error_messagef( z , "cannot send deauthentication packet" );
             PRINT( z->error_buffer );
-            z->stop = 1;
+            return 0;
         }
     }
+
+    return 1;
 }
 
-void zizzania_start_killer( struct zizzania *z )
+int zizzania_start_killer( struct zizzania *z )
 {
     PRINT( "waking up killer" );
 
@@ -83,6 +85,8 @@ void zizzania_start_killer( struct zizzania *z )
         }
 
         /* send deauthentication packets */
-        zizzania_deauthenticate( z );
+        return zizzania_deauthenticate( z );
     }
+
+    return 1;
 }
