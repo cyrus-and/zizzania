@@ -29,6 +29,9 @@ static int zizzania_deauthenticate( struct zizzania *z )
     for ( g_hash_table_iter_init( &i , z->kill_list ) ;
           g_hash_table_iter_next( &i , ( void * )&client_addr , ( void * )&packet ) ; )
     {
+        struct ieee80211_mac_header *mac_header;
+        uint16_t seq;
+
 #ifdef DEBUG
         char client_addr_str[18];
         ieee80211_addr_sprint( client_addr , client_addr_str );
@@ -42,6 +45,12 @@ static int zizzania_deauthenticate( struct zizzania *z )
             PRINT( z->error_buffer );
             return 0;
         }
+
+        /* increment sequence number */
+        mac_header = ( struct ieee80211_mac_header * )( packet + sizeof( struct ieee80211_radiotap_header ) );
+        seq = le16toh( mac_header->sequence_control );
+        seq = ( ( ( seq >> 4 ) + 1 ) % 0xfff ) << 4;
+        mac_header->sequence_control = htole16( seq );
     }
 
     return 1;
