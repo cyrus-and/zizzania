@@ -23,7 +23,7 @@
     "\x40\x06"                 /* sequence control */   \
     "\x07\x00"                 /* reason */
 
-void zizzania_deauthenticate( struct zizzania *z )
+static void zizzania_deauthenticate( struct zizzania *z )
 {
     GHashTableIter i;
     const ieee80211_addr_t client_addr;

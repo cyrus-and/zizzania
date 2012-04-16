@@ -13,7 +13,19 @@
 char bssid_str[18] , source_str[18] , destination_str[18] , client_addr_str[18];
 #endif
 
-void zizzania_update( struct zizzania *z , const ieee80211_addr_t target , const ieee80211_addr_t client_addr , struct client *client , const struct client_info *client_info )
+struct client
+{
+    uint8_t need_set;
+    int64_t start_counter;
+};
+
+struct client_info
+{
+    uint64_t replay_counter;
+    uint16_t flags;
+};
+
+static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target , const ieee80211_addr_t client_addr , struct client *client , const struct client_info *client_info )
 {
     int sequence;
 
