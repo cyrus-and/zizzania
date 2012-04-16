@@ -98,7 +98,7 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
             memcpy( message.client , client_addr , 6 );
             memcpy( message.bssid , target , 6 );
 
-            if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) == -1 ) )
+            if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
             {
                 zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
                 PRINT( z->error_buffer );
