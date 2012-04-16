@@ -20,7 +20,7 @@ void * zizzania_dispatcher( void *arg )
     timeout.tv_sec = DISPATCHER_TIMEOUT;
 
     /* wait for events */
-    while ( 1 )
+    while ( !z->stop )
     {
         switch( errno = 0 , sigtimedwait( &set , NULL , &timeout ) )
         {
@@ -28,7 +28,7 @@ void * zizzania_dispatcher( void *arg )
         case SIGTERM:
             PRINT( "signal catched" );
             z->stop = 1;
-            break;
+            continue;
 
         case -1:
             /* restart system call after a signal */
@@ -37,9 +37,6 @@ void * zizzania_dispatcher( void *arg )
             /* start the killer after a timeout */
             if ( errno == EAGAIN ) break;
         }
-
-        /* break loop */
-        if ( z->stop == 1 ) break;
 
         /* deauthenticate clients */
         if ( !zizzania_start_killer( z ) )
