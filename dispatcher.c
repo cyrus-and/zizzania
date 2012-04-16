@@ -30,19 +30,12 @@ void * zizzania_dispatcher( void *arg )
             z->stop = 1;
             break;
 
-        case -1: /* error or timeout */
+        case -1:
             /* restart system call after a signal */
             if ( errno == EINTR ) continue;
 
-            /* EAGAIN on timeout */
-            if ( errno != EAGAIN )
-            {
-                zizzania_set_error_messagef( z , "sigtimedwait error: %s" , strerror( errno ) );
-                PRINT( z->error_buffer );
-                z->stop = 1;
-                return ( void * )0;
-            }
-            break;
+            /* start the killer after a timeout */
+            if ( errno == EAGAIN ) break;
         }
 
         /* break loop */
