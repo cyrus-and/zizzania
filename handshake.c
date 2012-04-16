@@ -85,10 +85,11 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
         {
             struct zizzania_killer_message message;
 
+            PRINTF( "got full handshake for client %s @ %s" , source_str , bssid_str );
+
             /* notify to the user */
             if ( z->setup.on_handshake )
             {
-                PRINTF( "got full handshake for client %s @ %s" , source_str , bssid_str );
                 z->setup.on_handshake( target , client_addr );
             }
 
@@ -179,10 +180,11 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                 {
                     struct zizzania_killer_message message;
 
+                    PRINTF( "adding new client %s" , client_addr_str );
+
                     /* notify to the user */
                     if ( z->setup.on_new_client )
                     {
-                        PRINTF( "adding new client %s" , client_addr_str );
                         z->setup.on_new_client( bssid , client_addr );
                     }
 
