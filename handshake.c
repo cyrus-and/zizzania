@@ -99,7 +99,7 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
 
             if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) == -1 ) )
             {
-                strcpy( z->error_buffer , "cannot communicate with the dispatcher" );
+                zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
                 PRINT( z->error_buffer );
             }
         }
@@ -192,7 +192,7 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                     memcpy( message.bssid , bssid , 6 );
                     if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
                     {
-                        strcpy( z->error_buffer , "cannot communicate with the dispatcher" );
+                        zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
                         PRINT( z->error_buffer );
                     }
 

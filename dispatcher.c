@@ -42,7 +42,7 @@ static void zizzania_deauthenticate( struct zizzania *z )
         /* send packet */
         if ( pcap_inject( z->handler , packet , DEAUTHENTICATION_PACKET_SIZE ) == -1 )
         {
-            sprintf( z->error_buffer , "cannot send deauthentication packet" );
+            zizzania_set_error_messagef( z , "cannot send deauthentication packet" );
             PRINT( z->error_buffer );
             z->stop = 1;
         }
@@ -77,7 +77,7 @@ void * zizzania_dispatcher( void *arg )
             /* EAGAIN on timeout */
             if ( errno != EAGAIN )
             {
-                sprintf( z->error_buffer , "sigtimedwait error: %s" , strerror( errno ) );
+                zizzania_set_error_messagef( z , "sigtimedwait error: %s" , strerror( errno ) );
                 PRINT( z->error_buffer );
                 z->stop = 1;
                 return ( void * )0;

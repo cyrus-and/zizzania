@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <string.h>
 #include <endian.h>
+#include <stdarg.h>
 #include "debug.h"
 #include "handshake.h"
 #include "dispatcher.h"
@@ -71,12 +72,24 @@ int zizzania_initialize( struct zizzania *z )
          fcntl( z->comm[0] , F_SETFL , O_NONBLOCK ) ||
          fcntl( z->comm[1] , F_SETFL , O_NONBLOCK ) )
     {
-        strcpy( z->error_buffer , "cannot create the non-blocking communication pipe" );
+        zizzania_set_error_messagef( z , "cannot create the non-blocking communication pipe" );
         PRINT( z->error_buffer );
         return 0;
     }
 
     return 1;
+}
+
+int zizzania_set_error_messagef( struct zizzania *z , const char *format , ... )
+{
+    int chk;
+    va_list ap;
+
+    va_start( ap , format );
+    chk = vsnprintf( z->error_buffer , ZIZZANIA_ERROR_BUFFER_SIZE + 1 , format , ap );
+    va_end( ap );
+
+    return chk != ZIZZANIA_ERROR_BUFFER_SIZE;
 }
 
 int zizzania_add_target( struct zizzania *z , const ieee80211_addr_t target )
@@ -111,7 +124,7 @@ int zizzania_start( struct zizzania *z )
     /* start dispatcher */
     if ( pthread_create( &z->dispatcher , NULL , zizzania_dispatcher , z ) )
     {
-        strcpy( z->error_buffer , "unable to start dispatcher thread" );
+        zizzania_set_error_messagef( z , "unable to start dispatcher thread" );
         PRINT( z->error_buffer );
         return 0;
     }
@@ -122,7 +135,7 @@ int zizzania_start( struct zizzania *z )
     if ( sigaction( SIGINT , &sa , NULL ) ||
          sigaction( SIGTERM , &sa , NULL ) )
     {
-        strcpy( z->error_buffer , "unable to set signal action" );
+        zizzania_set_error_messagef( z , "unable to set signal action" );
         PRINT( z->error_buffer );
         return 0;
     }
@@ -131,7 +144,7 @@ int zizzania_start( struct zizzania *z )
     sigfillset( &set );
     if( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
     {
-        strcpy( z->error_buffer , "unable to set signal mask" );
+        zizzania_set_error_messagef( z , "unable to set signal mask" );
         PRINT( z->error_buffer );
         return 0;
     }
@@ -164,9 +177,9 @@ int zizzania_start( struct zizzania *z )
 
     if ( pcap_datalink( z->handler ) != DLT_IEEE802_11_RADIO )
     {
-        snprintf( z->error_buffer , PCAP_ERRBUF_SIZE , "wrong device type/mode %s; %s expected" ,
-                  pcap_datalink_val_to_name( dlt ) ,
-                  pcap_datalink_val_to_name( DLT_IEEE802_11_RADIO ));
+        zizzania_set_error_messagef( z , "wrong device type/mode %s; %s expected" ,
+                                     pcap_datalink_val_to_name( dlt ) ,
+                                     pcap_datalink_val_to_name( DLT_IEEE802_11_RADIO ) );
         PRINT( z->error_buffer );
         return 0;
     }
@@ -183,7 +196,7 @@ int zizzania_start( struct zizzania *z )
 
         if ( z->dumper = pcap_dump_open( z->handler , z->setup.output ) , !z->dumper )
         {
-            strcpy( z->error_buffer , pcap_geterr( z->handler ) );
+            zizzania_set_error_messagef( z , pcap_geterr( z->handler ) );
             PRINT( z->error_buffer );
             return 0;
         }
@@ -203,7 +216,7 @@ int zizzania_start( struct zizzania *z )
 
         case -1: /* error */
             PRINT( pcap_geterr( z->handler ) );
-            strcpy( z->error_buffer , pcap_geterr( z->handler ) );
+            zizzania_set_error_messagef( z , pcap_geterr( z->handler ) );
             return 0;
 
         case -2: /* end of file */

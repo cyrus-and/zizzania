@@ -25,7 +25,7 @@ struct zizzania
     }
     setup;
 
-    char error_buffer[ ZIZZANIA_ERROR_BUFFER_SIZE ];
+    char error_buffer[ ZIZZANIA_ERROR_BUFFER_SIZE + 1 ];
 
     pcap_t *handler;
     pcap_dumper_t *dumper;
@@ -37,6 +37,7 @@ struct zizzania
 };
 
 int zizzania_initialize( struct zizzania *z );
+int zizzania_set_error_messagef( struct zizzania *z , const char *format , ... );
 int zizzania_add_target( struct zizzania *z , const ieee80211_addr_t target );
 int zizzania_start( struct zizzania *z );
 void zizzania_finalize( struct zizzania *z );
