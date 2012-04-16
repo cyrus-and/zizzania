@@ -73,7 +73,6 @@ int zizzania_initialize( struct zizzania *z )
          fcntl( z->comm[1] , F_SETFL , O_NONBLOCK ) )
     {
         zizzania_set_error_messagef( z , "cannot create the non-blocking communication pipe" );
-        PRINT( z->error_buffer );
         return 0;
     }
 
@@ -125,7 +124,6 @@ int zizzania_start( struct zizzania *z )
     if ( pthread_create( &z->dispatcher , NULL , zizzania_dispatcher , z ) )
     {
         zizzania_set_error_messagef( z , "unable to start dispatcher thread" );
-        PRINT( z->error_buffer );
         return 0;
     }
 
@@ -136,7 +134,6 @@ int zizzania_start( struct zizzania *z )
          sigaction( SIGTERM , &sa , NULL ) )
     {
         zizzania_set_error_messagef( z , "unable to set signal action" );
-        PRINT( z->error_buffer );
         return 0;
     }
 
@@ -145,7 +142,6 @@ int zizzania_start( struct zizzania *z )
     if( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
     {
         zizzania_set_error_messagef( z , "unable to set signal mask" );
-        PRINT( z->error_buffer );
         return 0;
     }
 
@@ -180,7 +176,6 @@ int zizzania_start( struct zizzania *z )
         zizzania_set_error_messagef( z , "wrong device type/mode %s; %s expected" ,
                                      pcap_datalink_val_to_name( dlt ) ,
                                      pcap_datalink_val_to_name( DLT_IEEE802_11_RADIO ) );
-        PRINT( z->error_buffer );
         return 0;
     }
 
@@ -197,7 +192,6 @@ int zizzania_start( struct zizzania *z )
         if ( z->dumper = pcap_dump_open( z->handler , z->setup.output ) , !z->dumper )
         {
             zizzania_set_error_messagef( z , pcap_geterr( z->handler ) );
-            PRINT( z->error_buffer );
             return 0;
         }
     }

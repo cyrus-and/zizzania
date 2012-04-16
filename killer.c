@@ -42,7 +42,6 @@ static int zizzania_deauthenticate( struct zizzania *z )
         if ( pcap_inject( z->handler , packet , DEAUTHENTICATION_PACKET_SIZE ) == -1 )
         {
             zizzania_set_error_messagef( z , "cannot send deauthentication packet" );
-            PRINT( z->error_buffer );
             return 0;
         }
 
