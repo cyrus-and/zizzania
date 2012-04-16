@@ -159,9 +159,6 @@ int zizzania_start( struct zizzania *z )
 
         /* warning */
         if ( *z->error_buffer ) PRINT( z->error_buffer );
-
-        /* drop root privileges */
-        zizzania_drop_root();
     }
     /* from file */
     else
@@ -170,6 +167,9 @@ int zizzania_start( struct zizzania *z )
     }
 
     if ( !z->handler ) return 0;
+
+    /* drop root privileges */
+    zizzania_drop_root();
 
     /* check datalink type */
     dlt = pcap_datalink( z->handler );
