@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "debug.h"
-#include "dispatcher.h"
+#include "killer.h"
 #include "handshake.h"
 
 #define EAPOL_FLAGS_MASK 0x0dc8

@@ -13,7 +13,7 @@ debug:   CFLAGS += -g -DDEBUG
 
 # EXE ]-------------------------------------------------------------------------
 
-zizzania: dispatcher.o dissectors.o handshake.o main.o zizzania.o
+zizzania: dispatcher.o dissectors.o handshake.o killer.o main.o zizzania.o
 
 # UTILS ]-----------------------------------------------------------------------
 
@@ -33,10 +33,12 @@ uninstall:
 
 # DEPENDENCIES ]----------------------------------------------------------------
 
-dispatcher.o: dispatcher.c debug.h zizzania.h dissectors.h dispatcher.h
+dispatcher.o: dispatcher.c debug.h zizzania.h dissectors.h killer.h \
+ dispatcher.h
 dissectors.o: dissectors.c dissectors.h
-handshake.o: handshake.c debug.h dispatcher.h handshake.h zizzania.h \
- dissectors.h
+handshake.o: handshake.c debug.h killer.h zizzania.h dissectors.h \
+ handshake.h
+killer.o: killer.c debug.h killer.h zizzania.h dissectors.h
 main.o: main.c zizzania.h dissectors.h
 zizzania.o: zizzania.c debug.h handshake.h zizzania.h dissectors.h \
  dispatcher.h
