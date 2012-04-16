@@ -56,7 +56,9 @@ void * zizzania_dispatcher( void *arg )
     struct timespec timeout = { 0 };
 
     /* prepare timed wait */
-    sigfillset( &set );
+    sigemptyset( &set );
+    sigaddset( &set , SIGINT );
+    sigaddset( &set , SIGTERM );
     timeout.tv_sec = KILL_LOOP_INTERVAL;
 
     /* wait for events */
@@ -83,8 +85,6 @@ void * zizzania_dispatcher( void *arg )
                 return ( void * )0;
             }
             break;
-
-            /* do nothing other signals */
         }
 
         /* break loop */
