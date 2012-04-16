@@ -153,7 +153,7 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
         /* skip broadcast/multicast frames */
         if ( memcmp( destination , BROADCAST_MAC_ADDRESS , 6 ) != 0 &&
              memcmp( destination , IPV4_MULTICAST_MAC_ADDRESS_PFX , 3 ) != 0 &&
-             memcmp( destination , IPV6_MULTICAST_MAC_ADDRESS_PFX , 3 ) != 0 )
+             memcmp( destination , IPV6_MULTICAST_MAC_ADDRESS_PFX , 2 ) != 0 )
         {
             GHashTable *clients;
 
