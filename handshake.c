@@ -214,30 +214,44 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                      llc_snap_header->control == 0x03 &&
                      llc_snap_header->type == htobe16( 0x888e ) ) /* ieee8021x_authentication_header*/
                 {
+                    struct client_info client_info;
+
                     /* dump every eapol packets anyway this is a quick and dirty
                        way to cope with reconnections */
                     if ( z->dumper ) pcap_dump( ( u_char * )z->dumper , pkt_header , orig_pkt );
 
-                    /* continue handshake check for not finished clients only */
-                    if ( client->need_set )
+                    /* eapol message for finished clients triggers a reset since
+                       it's probably a reconnection so a new full handshake is
+                       needed */
+                    if ( !client->need_set )
                     {
-                        struct client_info client_info;
+                        struct zizzania_killer_message message;
 
-                        /* EAPOL header */
-                        pkt += sizeof( struct ieee8022_llc_snap_header );
-                        authentication_header = ( struct ieee8021x_authentication_header * )pkt;
+                        PRINTF( "possible reconnection of client %s" , client_addr_str );
 
-                        /* get interesting values */
-                        client_info.replay_counter = be64toh( authentication_header->replay_counter );
-                        client_info.flags = be16toh( authentication_header->flags );
+                        /* notify to the dispatcher */
+                        message.action = ZIZZANIA_NEW_CLIENT;
+                        memcpy( message.client , client_addr , 6 );
+                        memcpy( message.bssid , bssid , 6 );
+                        if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
+                        {
+                            zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
+                        }
 
-                        /* update with this packet */
-                        zizzania_update( z , bssid , client_addr , client , &client_info );
+                        /* reinitialize client */
+                        client->need_set = 0xf; /* 0b1111 */
                     }
-                    else
-                    {
-                        PRINTF( "ignoring already finished client %s" , client_addr_str );
-                    }
+
+                    /* EAPOL header */
+                    pkt += sizeof( struct ieee8022_llc_snap_header );
+                    authentication_header = ( struct ieee8021x_authentication_header * )pkt;
+
+                    /* get interesting values */
+                    client_info.replay_counter = be64toh( authentication_header->replay_counter );
+                    client_info.flags = be16toh( authentication_header->flags );
+
+                    /* update with this packet */
+                    zizzania_update( z , bssid , client_addr , client , &client_info );
                 }
                 else
                 {
