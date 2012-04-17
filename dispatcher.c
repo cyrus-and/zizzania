@@ -5,7 +5,7 @@
 #include "killer.h"
 #include "dispatcher.h"
 
-#define DISPATCHER_TIMEOUT 10
+#define DISPATCHER_TIMEOUT 5
 
 void * zizzania_dispatcher( void *arg )
 {
