@@ -6,10 +6,11 @@ LDFLAGS = `pcap-config --libs` `pkg-config --libs glib-2.0` -lpthread
 
 # CONFIGURATIONS ]--------------------------------------------------------------
 
-release debug: zizzania
+release debug vdebug: zizzania
 
 release: CFLAGS += -O3
 debug:   CFLAGS += -g -DDEBUG
+vdebug:  CFLAGS += -g -DDEBUG -DVDEBUG
 
 # EXE ]-------------------------------------------------------------------------
 

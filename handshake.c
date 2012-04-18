@@ -241,7 +241,7 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                 }
                 else
                 {
-#if 0 /* too verbose */
+#if VDEBUG
                     PRINTF( "skipping invalid SNAP+EAPOL frame "
                             "(DSAP: 0x%02x, SSAP: 0x%02x, control: 0x%02x, ULP: 0x%04hx) "
                             "from %s to %s @ %s" ,
@@ -257,18 +257,24 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                     }
                 }
             }
+#if VDEBUG
             else
             {
                 PRINTF( "skipping target %s" , bssid_str );
             }
+#endif
         }
+#if VDEBUG
         else
         {
             PRINTF( "skipping broadcast message from %s @ %s" , source_str , bssid_str );
         }
+#endif
     }
+#if VDEBUG
     else
     {
         PRINT( "skipping message due to frame direction" );
     }
+#endif
 }
