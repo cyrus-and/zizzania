@@ -25,6 +25,22 @@ struct client_info
     uint16_t flags;
 };
 
+static void zizzania_enqueue_dispatcher_action( struct zizzania *z , int action , const ieee80211_addr_t client , const ieee80211_addr_t bssid )
+{
+    struct zizzania_killer_message message;
+
+    /* prepare message */
+    message.action = action;
+    memcpy( message.client , client , 6 );
+    memcpy( message.bssid , bssid , 6 );
+
+    /* enqueue action */
+    if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
+    {
+        zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
+    }
+}
+
 static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target , const ieee80211_addr_t client_addr , struct client *client , const struct client_info *client_info )
 {
     int sequence;
@@ -83,8 +99,6 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
         /* done with that client */
         if ( client->need_set == 0 )
         {
-            struct zizzania_killer_message message;
-
             PRINTF( "got full handshake for client %s @ %s" , source_str , bssid_str );
 
             /* notify to the user */
@@ -94,14 +108,7 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
             }
 
             /* notify to the dispatcher */
-            message.action = ZIZZANIA_HANDSHAKE;
-            memcpy( message.client , client_addr , 6 );
-            memcpy( message.bssid , target , 6 );
-
-            if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
-            {
-                zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
-            }
+            zizzania_enqueue_dispatcher_action( z , ZIZZANIA_HANDSHAKE , client_addr , target );
         }
     }
 }
@@ -177,8 +184,6 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                 /* add the new client to the hashtable */
                 if ( client = g_hash_table_lookup( clients , client_addr ) , !client )
                 {
-                    struct zizzania_killer_message message;
-
                     PRINTF( "adding new client %s" , client_addr_str );
 
                     /* notify to the user */
@@ -188,13 +193,7 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                     }
 
                     /* notify to the dispatcher */
-                    message.action = ZIZZANIA_NEW_CLIENT;
-                    memcpy( message.client , client_addr , 6 );
-                    memcpy( message.bssid , bssid , 6 );
-                    if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
-                    {
-                        zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
-                    }
+                    zizzania_enqueue_dispatcher_action( z , ZIZZANIA_NEW_CLIENT , client_addr , bssid );
 
                     /* initialize client */
                     client = g_new( struct client , 1 );
@@ -225,18 +224,10 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                        needed */
                     if ( !client->need_set )
                     {
-                        struct zizzania_killer_message message;
-
                         PRINTF( "possible reconnection of client %s" , client_addr_str );
 
                         /* notify to the dispatcher */
-                        message.action = ZIZZANIA_NEW_CLIENT;
-                        memcpy( message.client , client_addr , 6 );
-                        memcpy( message.bssid , bssid , 6 );
-                        if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
-                        {
-                            zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
-                        }
+                        zizzania_enqueue_dispatcher_action( z , ZIZZANIA_NEW_CLIENT , client_addr , bssid );
 
                         /* reinitialize client */
                         client->need_set = 0xf; /* 0b1111 */
