@@ -235,6 +235,8 @@ void zizzania_finalize( struct zizzania *z )
 {
     if ( z->dumper ) pcap_dump_close( z->dumper );
     pcap_close( z->handler );
+    close( z->comm[0] );
+    close( z->comm[1] );
     g_hash_table_destroy( z->targets );
     g_hash_table_destroy( z->kill_list );
 }
