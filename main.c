@@ -10,6 +10,8 @@
         return EXIT_FAILURE;                            \
     }
 
+static int dump_to_stdout = 0;
+
 static void print_usage()
 {
     fprintf( stderr , "Usage:\n" );
@@ -19,11 +21,11 @@ static void print_usage()
     fprintf( stderr , "             [-n] [-w <file>]\n" );
     fprintf( stderr , "\n" );
     fprintf( stderr , "    -i <device> : use <device> for both capture and injection\n" );
-    fprintf( stderr , "    -r <file>   : read packets from <file>\n" );
+    fprintf( stderr , "    -r <file>   : read packets from <file> (- for stdin)\n" );
     fprintf( stderr , "    -b <bssid>  : handshakes of <bssid> clients only\n" );
     fprintf( stderr , "    -a          : auto discover BSSIDs\n" );
     fprintf( stderr , "    -n          : passively look for handshakes\n" );
-    fprintf( stderr , "    -w          : dump captured packets to <file> stripping management frames\n" );
+    fprintf( stderr , "    -w          : dump captured packets to <file> (- for stdout)\n" );
     fprintf( stderr , "\n" );
 }
 
@@ -67,6 +69,7 @@ static int parse_options( struct zizzania *z , int argc , char *argv[] )
 
         case 'w':
             strncpy( z->setup.output , optarg , ZIZZANIA_MAX_PATH );
+            if ( strcmp( z->setup.output , "-" ) == 0 ) dump_to_stdout = 1;
             n_output++;
             break;
 
@@ -145,7 +148,7 @@ static void on_new_client( const ieee80211_addr_t bssid , const ieee80211_addr_t
     ieee80211_addr_sprint( bssid , bssid_str );
     ieee80211_addr_sprint( client , client_str );
 
-    printf( "N %s @ %s\n" , client_str , bssid_str );
+    fprintf( dump_to_stdout ? stderr : stdout , "N %s @ %s\n" , client_str , bssid_str );
 }
 
 static void on_handshake( const ieee80211_addr_t bssid , const ieee80211_addr_t client )
@@ -155,7 +158,7 @@ static void on_handshake( const ieee80211_addr_t bssid , const ieee80211_addr_t 
     ieee80211_addr_sprint( bssid , bssid_str );
     ieee80211_addr_sprint( client , client_str );
 
-    printf( "H %s @ %s <<<\n" , client_str , bssid_str );
+    fprintf( dump_to_stdout ? stderr : stdout , "H %s @ %s <<<\n" , client_str , bssid_str );
 }
 
 int main( int argc , char *argv[] )
