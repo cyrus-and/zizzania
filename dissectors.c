@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "dissectors.h"
@@ -22,15 +23,14 @@ void ieee80211_addr_sprint( const ieee80211_addr_t addr , char buffer[18] )
 
 int ieee80211_addr_sscan( ieee80211_addr_t addr , const char buffer[18] )
 {
-    int n;
+    int i;
 
-    n = sscanf( buffer , "%2x%*[:-]%2x%*[:-]%2x%*[:-]%2x%*[:-]%2x%*[:-]%2x" ,
-                ( unsigned int * )&addr[0] ,
-                ( unsigned int * )&addr[1] ,
-                ( unsigned int * )&addr[2] ,
-                ( unsigned int * )&addr[3] ,
-                ( unsigned int * )&addr[4] ,
-                ( unsigned int * )&addr[5] );
+    for ( i = 0 ; i < 6 ; buffer += 3 , i++ )
+    {
+        char *chk;
+        addr[i] = strtol( buffer , &chk , 16 );
+        if ( ( *chk != ':' && *chk != '\0' ) || chk - buffer != 2 ) return 0;
+    }
 
-    return n == 6;
+    return 1;
 }
