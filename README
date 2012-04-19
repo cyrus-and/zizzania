@@ -11,3 +11,25 @@ Install:
 Uninstall:
 
     # make uninstall
+
+Examples:
+
+    Take a look around:
+
+        # zizzania -i wlan0 -n -a
+
+    Passively wait for handshakes of a specific AP and dump decryptable traffic
+    to a file:
+
+        # zizzania -i wlan0 -n -b 11:22:33:44:55:66 -w passive.cap
+
+    Force the reconnection of the clients of two specific APs and dump the
+    decryptable traffic to a gzipped file:
+
+        # zizzania -i wlan0 -b 11:22:33:44:55:66 -b aa:bb:cc:dd:ee:ff -w - | \
+                   gzip > active.cap.gz
+
+    Extract the decryptable traffic of a specific AP from a gzipped file and
+    dump it to a file:
+
+        $ < file.cap.gz gunzip | zizzania -r - -b 11:22:33:44:55:66 -w crop.cap
