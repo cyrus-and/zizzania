@@ -27,19 +27,22 @@ struct client_info
 
 static int zizzania_enqueue_dispatcher_action( struct zizzania *z , int action , const ieee80211_addr_t client , const ieee80211_addr_t bssid )
 {
-    struct zizzania_killer_message message;
-
-    /* prepare message */
-    message.action = action;
-    memcpy( message.client , client , 6 );
-    memcpy( message.bssid , bssid , 6 );
-
-    /* enqueue action */
-    if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
+    if ( !z->setup.passive )
     {
-        zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
-        z->stop = 1;
-        return 0;
+        struct zizzania_killer_message message;
+
+        /* prepare message */
+        message.action = action;
+        memcpy( message.client , client , 6 );
+        memcpy( message.bssid , bssid , 6 );
+
+        /* enqueue action */
+        if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
+        {
+            zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
+            z->stop = 1;
+            return 0;
+        }
     }
 
     return 1;
