@@ -184,7 +184,7 @@ int zizzania_start( struct zizzania *z )
     /* mask all signals (so everything is sent to the dispatcher, blocked on the
        sigtimedwait) */
     sigfillset( &set );
-    if( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
+    if ( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
     {
         zizzania_set_error_messagef( z , "unable to set signal mask" );
         return 0;
@@ -200,7 +200,7 @@ int zizzania_start( struct zizzania *z )
     /* packet loop */
     while ( !z->stop )
     {
-        switch( pcap_next_ex( z->handler , &packet_header , &packet ) )
+        switch ( pcap_next_ex( z->handler , &packet_header , &packet ) )
         {
         case 0: /* timeout */
             break; /* recheck flag and eventually start over */

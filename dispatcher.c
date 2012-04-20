@@ -22,7 +22,7 @@ void * zizzania_dispatcher( void *arg )
     /* wait for events */
     while ( !z->stop )
     {
-        switch( errno = 0 , sigtimedwait( &set , NULL , &timeout ) )
+        switch ( errno = 0 , sigtimedwait( &set , NULL , &timeout ) )
         {
         case SIGINT:
         case SIGTERM:
