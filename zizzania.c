@@ -120,13 +120,6 @@ int zizzania_start( struct zizzania *z )
     int dlt;
     uint8_t retval;
 
-    /* start dispatcher */
-    if ( pthread_create( &z->dispatcher , NULL , zizzania_dispatcher , z ) )
-    {
-        zizzania_set_error_messagef( z , "unable to start dispatcher thread" );
-        return 0;
-    }
-
     /* ignore signals */
     memset( &sa , 0 , sizeof( struct sigaction ) );
     sa.sa_handler = SIG_IGN;
@@ -137,11 +130,19 @@ int zizzania_start( struct zizzania *z )
         return 0;
     }
 
-    /* mask all signals (so everything is sent to the dispatcher) */
+    /* mask all signals (so everything is sent to the dispatcher, blocked on the
+       sigtimedwait) */
     sigfillset( &set );
     if( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
     {
         zizzania_set_error_messagef( z , "unable to set signal mask" );
+        return 0;
+    }
+
+    /* start dispatcher */
+    if ( pthread_create( &z->dispatcher , NULL , zizzania_dispatcher , z ) )
+    {
+        zizzania_set_error_messagef( z , "unable to start dispatcher thread" );
         return 0;
     }
 
