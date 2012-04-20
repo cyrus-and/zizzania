@@ -120,32 +120,6 @@ int zizzania_start( struct zizzania *z )
     int dlt;
     uint8_t retval;
 
-    /* ignore signals */
-    memset( &sa , 0 , sizeof( struct sigaction ) );
-    sa.sa_handler = SIG_IGN;
-    if ( sigaction( SIGINT , &sa , NULL ) ||
-         sigaction( SIGTERM , &sa , NULL ) )
-    {
-        zizzania_set_error_messagef( z , "unable to set signal action" );
-        return 0;
-    }
-
-    /* mask all signals (so everything is sent to the dispatcher, blocked on the
-       sigtimedwait) */
-    sigfillset( &set );
-    if( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
-    {
-        zizzania_set_error_messagef( z , "unable to set signal mask" );
-        return 0;
-    }
-
-    /* start dispatcher */
-    if ( pthread_create( &z->dispatcher , NULL , zizzania_dispatcher , z ) )
-    {
-        zizzania_set_error_messagef( z , "unable to start dispatcher thread" );
-        return 0;
-    }
-
     /* get pcap handle live */
     if ( z->setup.live )
     {
@@ -195,6 +169,32 @@ int zizzania_start( struct zizzania *z )
             zizzania_set_error_messagef( z , pcap_geterr( z->handler ) );
             return 0;
         }
+    }
+
+    /* ignore signals */
+    memset( &sa , 0 , sizeof( struct sigaction ) );
+    sa.sa_handler = SIG_IGN;
+    if ( sigaction( SIGINT , &sa , NULL ) ||
+         sigaction( SIGTERM , &sa , NULL ) )
+    {
+        zizzania_set_error_messagef( z , "unable to set signal action" );
+        return 0;
+    }
+
+    /* mask all signals (so everything is sent to the dispatcher, blocked on the
+       sigtimedwait) */
+    sigfillset( &set );
+    if( pthread_sigmask( SIG_SETMASK , &set , NULL ) )
+    {
+        zizzania_set_error_messagef( z , "unable to set signal mask" );
+        return 0;
+    }
+
+    /* start dispatcher */
+    if ( pthread_create( &z->dispatcher , NULL , zizzania_dispatcher , z ) )
+    {
+        zizzania_set_error_messagef( z , "unable to start dispatcher thread" );
+        return 0;
     }
 
     /* packet loop */
