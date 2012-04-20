@@ -57,44 +57,38 @@ static int zizzania_deauthenticate( struct zizzania *z )
 
 int zizzania_start_killer( struct zizzania *z )
 {
+    struct zizzania_killer_message message;
+
     PRINT( "waking up killer" );
 
-    /* start deauthentication loop (if not passive) */
-    if ( !z->setup.passive )
+    /* while there are pending messages */
+    while ( read( z->comm[0] , &message , sizeof( struct zizzania_killer_message ) ) > 0 )
     {
-        struct zizzania_killer_message message;
-
-        /* while there are pending messages */
-        while ( read( z->comm[0] , &message , sizeof( struct zizzania_killer_message ) ) > 0 )
+        switch ( message.action )
         {
-            switch ( message.action )
+        case ZIZZANIA_NEW_CLIENT:
             {
-            case ZIZZANIA_NEW_CLIENT:
-                {
-                    struct ieee80211_mac_header *mac_header;
-                    u_char *packet = g_memdup( DEAUTHENTICATION_PACKET , DEAUTHENTICATION_PACKET_SIZE );
+                struct ieee80211_mac_header *mac_header;
+                u_char *packet = g_memdup( DEAUTHENTICATION_PACKET , DEAUTHENTICATION_PACKET_SIZE );
 
-                    /* craft packet */
-                    mac_header = ( struct ieee80211_mac_header * )( packet + sizeof( struct ieee80211_radiotap_header ) );
-                    memcpy( mac_header->address_1 , message.client , 6 );
-                    memcpy( mac_header->address_2 , message.bssid , 6 );
-                    memcpy( mac_header->address_3 , message.bssid , 6 );
+                /* craft packet */
+                mac_header = ( struct ieee80211_mac_header * )( packet + sizeof( struct ieee80211_radiotap_header ) );
+                memcpy( mac_header->address_1 , message.client , 6 );
+                memcpy( mac_header->address_2 , message.bssid , 6 );
+                memcpy( mac_header->address_3 , message.bssid , 6 );
 
-                    /* save it in the hashtable */
-                    g_hash_table_insert( z->kill_list , g_memdup( message.client , 6 ) , packet );
-                    break;
-                }
-
-            case ZIZZANIA_HANDSHAKE:
-                /* stop deauthenticating it */
-                g_hash_table_remove( z->kill_list , message.client );
+                /* save it in the hashtable */
+                g_hash_table_insert( z->kill_list , g_memdup( message.client , 6 ) , packet );
                 break;
             }
-        }
 
-        /* send deauthentication packets */
-        return zizzania_deauthenticate( z );
+        case ZIZZANIA_HANDSHAKE:
+            /* stop deauthenticating it */
+            g_hash_table_remove( z->kill_list , message.client );
+            break;
+        }
     }
 
-    return 1;
+    /* send deauthentication packets */
+    return zizzania_deauthenticate( z );
 }

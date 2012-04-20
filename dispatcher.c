@@ -38,11 +38,14 @@ void * zizzania_dispatcher( void *arg )
             if ( errno == EAGAIN ) break;
         }
 
-        /* deauthenticate clients */
-        if ( !zizzania_start_killer( z ) )
+        /* deauthenticate clients (if not passive) */
+        if ( !z->setup.passive )
         {
-            z->stop = 1;
-            return ( void * )0;
+            if ( !zizzania_start_killer( z ) )
+            {
+                z->stop = 1;
+                return ( void * )0;
+            }
         }
     }
 
