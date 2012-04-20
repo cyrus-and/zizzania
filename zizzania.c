@@ -119,6 +119,7 @@ int zizzania_start( struct zizzania *z )
     struct pcap_pkthdr *packet_header;
     int dlt;
     uint8_t retval;
+    int error = 0;
 
     /* get pcap handle live */
     if ( z->setup.live )
@@ -206,17 +207,19 @@ int zizzania_start( struct zizzania *z )
             break; /* recheck flag and eventually start over */
 
         case 1: /* no problem */
-            zizzania_process_packet( z , packet_header , packet );
+            error = !zizzania_process_packet( z , packet_header , packet );
             break;
 
         case -1: /* error */
             PRINT( pcap_geterr( z->handler ) );
             zizzania_set_error_messagef( z , pcap_geterr( z->handler ) );
-            return 0;
+            error = z->stop = 1;
+            break;
 
         case -2: /* end of file */
             PRINT( "eof" );
-            return 1;
+            z->stop = 1;
+            break;
         }
     }
 
@@ -229,7 +232,7 @@ int zizzania_start( struct zizzania *z )
         return 0;
     }
 
-    return retval;
+    return !error && retval;
 }
 
 void zizzania_finalize( struct zizzania *z )

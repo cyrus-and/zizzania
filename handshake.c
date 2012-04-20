@@ -25,7 +25,7 @@ struct client_info
     uint16_t flags;
 };
 
-static void zizzania_enqueue_dispatcher_action( struct zizzania *z , int action , const ieee80211_addr_t client , const ieee80211_addr_t bssid )
+static int zizzania_enqueue_dispatcher_action( struct zizzania *z , int action , const ieee80211_addr_t client , const ieee80211_addr_t bssid )
 {
     struct zizzania_killer_message message;
 
@@ -38,10 +38,14 @@ static void zizzania_enqueue_dispatcher_action( struct zizzania *z , int action 
     if ( write( z->comm[1] , &message , sizeof( struct zizzania_killer_message ) ) == -1 )
     {
         zizzania_set_error_messagef( z , "cannot communicate with the dispatcher" );
+        z->stop = 1;
+        return 0;
     }
+
+    return 1;
 }
 
-static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target , const ieee80211_addr_t client_addr , struct client *client , const struct client_info *client_info )
+static int zizzania_update( struct zizzania *z , const ieee80211_addr_t target , const ieee80211_addr_t client_addr , struct client *client , const struct client_info *client_info )
 {
     int sequence;
 
@@ -58,7 +62,7 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
         if ( client->need_set & 1 )
         {
             PRINT( "waiting for handshake #1, cannot distinguish between #2 and #4" );
-            return;
+            return 1;
         }
 
         /* disambiguate */
@@ -67,7 +71,7 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
         else
         {
             PRINT( "skipping handshake #2 or #4 since it's part of another" );
-            return;
+            return 1;
         }
         break;
 
@@ -78,7 +82,7 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
     default:
         PRINTF( "unrecognizable EAPOL flags 0x%04hx of %s @ %s" ,
                 client_info->flags , source_str , bssid_str );
-        return;
+        return 1;
     }
 
     PRINTF( "got handshake #%i for client %s @ %s" , sequence + 1 , client_addr_str , bssid_str );
@@ -108,12 +112,14 @@ static void zizzania_update( struct zizzania *z , const ieee80211_addr_t target 
             }
 
             /* notify to the dispatcher */
-            zizzania_enqueue_dispatcher_action( z , ZIZZANIA_HANDSHAKE , client_addr , target );
+            return zizzania_enqueue_dispatcher_action( z , ZIZZANIA_HANDSHAKE , client_addr , target );
         }
     }
+
+    return 1;
 }
 
-void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt_header , const uint8_t *pkt )
+int zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt_header , const uint8_t *pkt )
 {
     const uint8_t *orig_pkt = pkt;
     struct ieee80211_radiotap_header *radiotap_header;
@@ -193,7 +199,10 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
                     }
 
                     /* notify to the dispatcher */
-                    zizzania_enqueue_dispatcher_action( z , ZIZZANIA_NEW_CLIENT , client_addr , bssid );
+                    if ( !zizzania_enqueue_dispatcher_action( z , ZIZZANIA_NEW_CLIENT , client_addr , bssid ) )
+                    {
+                        return 0;
+                    }
 
                     /* initialize client */
                     client = g_new( struct client , 1 );
@@ -282,4 +291,6 @@ void zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt
         PRINT( "skipping message due to frame direction" );
     }
 #endif
+
+    return 1;
 }
