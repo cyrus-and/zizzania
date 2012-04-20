@@ -136,6 +136,7 @@ int zizzania_start( struct zizzania *z )
     else
     {
         z->handler = pcap_open_offline( z->setup.input , z->error_buffer );
+        z->setup.passive = 1;
     }
 
     if ( !z->handler ) return 0;
