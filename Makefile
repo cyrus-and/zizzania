@@ -8,7 +8,7 @@ LDFLAGS = `pcap-config --libs` `pkg-config --libs glib-2.0` -lpthread
 
 release debug vdebug: zizzania
 
-release: CFLAGS += -O3
+release: CFLAGS += -O3 -Os
 debug:   CFLAGS += -g -DDEBUG
 vdebug:  CFLAGS += -g -DDEBUG -DVDEBUG
 
