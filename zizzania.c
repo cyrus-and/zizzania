@@ -225,6 +225,9 @@ int zizzania_start( struct zizzania *z )
 
     PRINT( "shuting down the dispatcher" );
 
+    /* force dispatcher wakeup on errors on this thread */
+    pthread_kill( z->dispatcher , SIGTERM );
+
     /* join dispatcher thread */
     if ( pthread_join( z->dispatcher , ( void * )&retval ) )
     {
