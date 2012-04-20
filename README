@@ -1,3 +1,7 @@
+=================================
+ zizzania - WPA handshake hunter
+=================================
+
 Info:
 
     zizzania reads packets from a pcap file or from a wireless device (RFMON
