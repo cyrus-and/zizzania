@@ -7,9 +7,10 @@ Info:
     zizzania reads packets from a pcap file or from a wireless device (RFMON
     mode) and recognizes the WPA 4-way handshakes of the clients. Captured
     traffic can be saved to a pcap file that will contain, for each client, the
-    handshake followed by its data (IEEE 802.11 unicast data frames only) ready
-    for subsequent encryption. When capturing from a device, zizzania keeps
-    deauthenticating the clients until their handshakes are not gathered.
+    handshake followed by its data (IEEE 802.11 unicast data frames only): ready
+    for subsequent decryption. When capturing from a device, zizzania keeps
+    deauthenticating the clients it found until their handshakes are not
+    gathered.
 
 Dependencies:
 
