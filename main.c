@@ -14,19 +14,20 @@ static int dump_to_stdout = 0;
 
 static void print_usage()
 {
-    fprintf( stderr , "Usage:\n" );
-    fprintf( stderr , "\n" );
-    fprintf( stderr , "    zizzania -i <device> | -r <file>\n" );
-    fprintf( stderr , "             -b <bssid_1> -b <bssid_2> ... | -a\n" );
-    fprintf( stderr , "             [-n] [-w <file>]\n" );
-    fprintf( stderr , "\n" );
-    fprintf( stderr , "    -i <device> : use <device> for both capture and injection\n" );
-    fprintf( stderr , "    -r <file>   : read packets from <file> (- for stdin)\n" );
-    fprintf( stderr , "    -b <bssid>  : handshakes of <bssid> clients only\n" );
-    fprintf( stderr , "    -a          : auto discover BSSIDs\n" );
-    fprintf( stderr , "    -n          : passively look for handshakes\n" );
-    fprintf( stderr , "    -w          : dump captured packets to <file> (- for stdout)\n" );
-    fprintf( stderr , "\n" );
+    fprintf( stderr ,
+             "Usage:\n"
+             "\n"
+             "    zizzania -i <device> | -r <file>\n"
+             "             -b <bssid_1> -b <bssid_2> ... | -a\n"
+             "             [-n] [-w <file>]\n"
+             "\n"
+             "    -i <device> : use <device> for both capture and injection\n"
+             "    -r <file>   : read packets from <file> (- for stdin)\n"
+             "    -b <bssid>  : handshakes of <bssid> clients only\n"
+             "    -a          : auto discover BSSIDs\n"
+             "    -n          : passively look for handshakes\n"
+             "    -w          : dump captured packets to <file> (- for stdout)\n"
+             "\n" );
 }
 
 static int parse_options( struct zizzania *z , int argc , char *argv[] )
