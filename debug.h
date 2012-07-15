@@ -15,7 +15,7 @@
 
 #else
 
-#define PRINT( format  ) do ; while ( 0 )
+#define PRINT( string ) do ; while ( 0 )
 #define PRINTF( format , ... ) do ; while ( 0 )
 
 #endif
