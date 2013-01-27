@@ -11,18 +11,19 @@ clients it finds until their handshakes are not gathered.
 Dependencies
 ------------
 
-    libpcap-dev (>= 1.1.1)
-    libglib2.0-dev (>= 2.24.2)
+For Debian-based distros just run:
 
-Install
--------
+    sudo apt-get install libpcap-dev libglib2.0-dev
+
+Build and install
+-----------------
 
     make
+
+The install process is not mandatory, zizzania can be run from this
+directory. Just in case:
+
     sudo make install
-
-Uninstall
----------
-
     sudo make uninstall
 
 Sample usage
