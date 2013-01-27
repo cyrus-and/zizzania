@@ -10,13 +10,12 @@
 
 typedef uint8_t *ieee80211_addr_t;
 
-guint ieee80211_addr_hash( gconstpointer key );
-gboolean ieee80211_addr_equal( gconstpointer a , gconstpointer b );
-void ieee80211_addr_sprint( const ieee80211_addr_t addr , char buffer[18] );
-int ieee80211_addr_sscan( ieee80211_addr_t addr , const char buffer[18] );
+guint ieee80211_addr_hash(gconstpointer key);
+gboolean ieee80211_addr_equal(gconstpointer a, gconstpointer b);
+void ieee80211_addr_sprint(const ieee80211_addr_t addr, char buffer[18]);
+int ieee80211_addr_sscan(ieee80211_addr_t addr, const char buffer[18]);
 
-struct ieee80211_radiotap_header
-{
+struct ieee80211_radiotap_header {
     uint8_t version;
     uint8_t padding;
     uint16_t length;
@@ -24,8 +23,7 @@ struct ieee80211_radiotap_header
 }
 __attribute__((__packed__));
 
-struct ieee80211_mac_header
-{
+struct ieee80211_mac_header {
     /* frame control field (2byte) */
     int version:2;
     int type:2;
@@ -47,8 +45,7 @@ struct ieee80211_mac_header
 }
 __attribute__((__packed__));
 
-struct ieee8022_llc_snap_header
-{
+struct ieee8022_llc_snap_header {
     /* llc should be 0xaaaa03 for snap */
     uint8_t dsap;
     uint8_t ssap;
@@ -60,8 +57,7 @@ struct ieee8022_llc_snap_header
 }
 __attribute__((__packed__));
 
-struct ieee8021x_authentication_header
-{
+struct ieee8021x_authentication_header {
     uint8_t version;
     uint8_t type;
     uint16_t length;

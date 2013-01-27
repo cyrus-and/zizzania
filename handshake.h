@@ -5,6 +5,8 @@
 #include <glib.h>
 #include "zizzania.h"
 
-int zizzania_process_packet( struct zizzania *z , const struct pcap_pkthdr *pkt_header , const uint8_t *pkt );
+int zizzania_process_packet(struct zizzania *z,
+                            const struct pcap_pkthdr *pkt_header,
+                            const uint8_t *pkt);
 
 #endif
