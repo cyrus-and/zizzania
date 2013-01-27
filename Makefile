@@ -34,6 +34,7 @@ uninstall:
 
 # DEPENDENCIES ]----------------------------------------------------------------
 
+# gcc -MM *.c
 dispatcher.o: dispatcher.c debug.h zizzania.h dissectors.h killer.h \
  dispatcher.h
 dissectors.o: dissectors.c dissectors.h
