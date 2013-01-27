@@ -5,13 +5,14 @@
 
 #include <stdio.h>
 
-#define DEBUG_PREFIX ">>> "
+#define ZIZZANIA_DEBUG_PREFIX ">>> "
 
 #define PRINT(string) \
-    do fprintf(stderr, DEBUG_PREFIX "%s\n", string); while (0)
+    do fprintf(stderr, ZIZZANIA_DEBUG_PREFIX "%s\n", string); while (0)
 
 #define PRINTF(format, ...) \
-    do fprintf(stderr, DEBUG_PREFIX format "\n", ##__VA_ARGS__); while (0)
+    do fprintf(stderr, ZIZZANIA_DEBUG_PREFIX format "\n", \
+               ##__VA_ARGS__); while (0)
 
 #else
 

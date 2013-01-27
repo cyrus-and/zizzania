@@ -169,8 +169,10 @@ int zizzania_process_packet(struct zizzania *z,
 
         /* skip broadcast/multicast frames */
         if (memcmp(destination, BROADCAST_MAC_ADDRESS, 6) != 0 &&
-            memcmp(destination, IPV4_MULTICAST_MAC_ADDRESS_PFX, 3) != 0 &&
-            memcmp(destination, IPV6_MULTICAST_MAC_ADDRESS_PFX, 2) != 0) {
+            memcmp(destination, IPV4_MULTICAST_MAC_ADDRESS_PFX,
+                   IPV4_MULTICAST_MAC_ADDRESS_PFX_LENGTH) != 0 &&
+            memcmp(destination, IPV6_MULTICAST_MAC_ADDRESS_PFX,
+                   IPV6_MULTICAST_MAC_ADDRESS_PFX_LENGTH) != 0) {
             GHashTable *clients;
 
             /* automatically add target */
