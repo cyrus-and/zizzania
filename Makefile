@@ -18,22 +18,19 @@ zizzania: dispatcher.o dissectors.o handshake.o killer.o main.o zizzania.o
 
 # UTILS ]-----------------------------------------------------------------------
 
-.PHONY: clean cleanall install uninstall archive
+.PHONY: clean cleanall install uninstall
 
 clean:
 	rm -fr *.o
 
 cleanall: clean
-	rm -fr ./zizzania ./zizzania-*.tar.gz
+	rm -fr ./zizzania
 
 install:
 	cp ./zizzania /usr/bin
 
 uninstall:
 	rm -f /usr/bin/zizzania
-
-archive:
-	git archive HEAD --prefix=zizzania/ | gzip > zizzania-`git describe --always`.tar.gz
 
 # DEPENDENCIES ]----------------------------------------------------------------
 
