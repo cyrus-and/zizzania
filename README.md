@@ -1,12 +1,16 @@
 zizzania - Automatic DeAuth attack
 ==================================
 
-zizzania reads packets from a pcap file or from a wireless device (RFMON mode)
-and recognizes the WPA 4-way handshakes of the clients. Captured traffic can be
-saved to a pcap file that will contain, for each client, the handshake followed
-by its data (IEEE 802.11 unicast data frames only): ready for subsequent
-decryption. When capturing from a device, zizzania keeps on deauthenticating the
-clients it finds until their handshakes are not gathered.
+zizzania deauthenticates the clients of one or more access points until their
+WPA handshakes are not taken, in doing so it tries to minimize multiple
+deauthentications. It can also work passively.
+
+The captured traffic can be saved to a pcap file that contains every handshake
+found followed by the actual payload traffic (IEEE 802.11 unicast data frames
+only). The WPA decryption phase is left to tools like Wireshark.
+
+It can even strip unnecessary packets from an existing pcap file captured by a
+wireless interface in RFMON mode.
 
 Dependencies
 ------------
