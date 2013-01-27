@@ -27,10 +27,10 @@ cleanall: clean
 	rm -fr ./zizzania
 
 install:
-	cp ./zizzania /usr/bin
+	cp ./zizzania /usr/local/bin
 
 uninstall:
-	rm -f /usr/bin/zizzania
+	rm -f /usr/local/bin/zizzania
 
 # DEPENDENCIES ]----------------------------------------------------------------
 
