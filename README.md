@@ -71,3 +71,28 @@ Extract the decryptable traffic of a specific AP from a gzipped file and dump it
 to a file:
 
     gunzip < file.cap.gz | zizzania -r - -b 11:22:33:44:55:66 -w crop.cap
+
+Typical output
+--------------
+
+The generated output is meant to be easily parsable.
+
+Every time zizzania sniffs a new client it dumps a line in the form:
+
+    N 00:11:22:33:44:55 @ aa:bb:cc:dd:ee:ff
+
+This means that there is some activity from the station with MAC address
+`00:11:22:33:44:55` associated with the AP `aa:bb:cc:dd:ee:ff`.
+
+Instead, each properly recognized handshake produces the following:
+
+    H 00:11:22:33:44:55 @ aa:bb:cc:dd:ee:ff <<<
+
+The `<<<` is there just for visual feedback.
+
+Deauthentication loop
+---------------------
+
+When run in active mode (with `-i` and without `-n` options) zizzania
+continuously looks for new clients and once in awhile sends deauthentication
+frames to the clients for which it has not yet captured the handshake.
