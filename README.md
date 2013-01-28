@@ -36,6 +36,21 @@ directory. Just in case:
 Sample usage
 ------------
 
+Run zizzania without arguments to display a brief usage message:
+
+    Usage:
+
+        zizzania -i <device> | -r <file>
+                 -b <bssid_1> -b <bssid_2> ... | -a
+                 [-n] [-w <file>]
+
+        -i <device> : use <device> for both capture and injection
+        -r <file>   : read packets from <file> (- for stdin)
+        -b <bssid>  : handshakes of <bssid> clients only
+        -a          : auto discover BSSIDs
+        -n          : passively look for handshakes
+        -w          : dump captured packets to <file> (- for stdout)
+
 Take a look around:
 
     sudo zizzania -i wlan0 -n -a
