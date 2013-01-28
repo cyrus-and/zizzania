@@ -22,9 +22,12 @@ For Debian-based distros just run:
 Build and install
 -----------------
 
+    mkdir build
+    cd build
+    cmake ..
     make
 
-The install process is not mandatory, zizzania can be run from this
+The install process is not mandatory, zizzania can be run from the `build`
 directory. Just in case:
 
     sudo make install
