@@ -96,3 +96,15 @@ Deauthentication loop
 When run in active mode (with `-i` and without `-n` options) zizzania
 continuously looks for new clients and once in awhile sends deauthentication
 frames to the clients for which it has not yet captured the handshake.
+
+RFMON mode and injection
+------------------------
+
+zizzania requires that the wireless device is operating in monitor mode (Radio
+Frequency MONitor) in order to sniff the traffic (`-i` option). While in active
+mode (without `-n` option) it also require that the wireless device supports
+packet injection.
+
+Note that not every wireless device is natively capable of switching mode,
+injecting frames and freely switching channels. Sometimes patched drivers might
+be required.
