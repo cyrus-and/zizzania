@@ -4,6 +4,13 @@ Tools
 This directory contains a set of useful scripts for managing wireless
 devices. They require `ip` and `iw` executables and must be run as root user.
 
+scan.sh
+-------
+
+    scan.sh device
+
+List all the APs that are in range of `device`. Requires managed mode.
+
 monitor.sh
 ----------
 
