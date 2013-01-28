@@ -8,6 +8,7 @@ shift 2
 while true ; do
     for CHANNEL in $@ ; do
         iw dev $DEV set channel $CHANNEL
+        echo "Channel $CHANNEL"
         sleep $TIMEOUT
     done
 done
