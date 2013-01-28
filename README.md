@@ -17,7 +17,7 @@ Dependencies
 
 For Debian-based distros just run:
 
-    sudo apt-get install libpcap-dev libglib2.0-dev
+    sudo apt-get install cmake libpcap-dev libglib2.0-dev
 
 Build and install
 -----------------
