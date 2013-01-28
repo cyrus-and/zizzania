@@ -7,7 +7,7 @@ add_definitions(-std=gnu99 -Wall -pedantic)
 include_directories(lib/)
 
 # executable
-add_executable(zizzania-bin bin/zizzania.c ${LIBRARY_SRC})
+add_executable(zizzania-bin bin/zizzania.c)
 set_target_properties(zizzania-bin PROPERTIES OUTPUT_NAME zizzania)
 
 # library
