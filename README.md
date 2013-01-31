@@ -105,7 +105,8 @@ Frequency MONitor) in order to sniff the traffic (`-i` option). While in active
 mode (without `-n` option) it also require that the wireless device supports
 packet injection.
 
-A number of management scripts can be found in the `/tools/` folder.
+A number of management scripts can be found in the [`/tools/`](tools/README.md)
+folder.
 
 Note that not every wireless device is natively capable of switching mode,
 injecting frames and freely switching channels. Sometimes patched drivers might
