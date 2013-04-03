@@ -40,6 +40,10 @@ else()
   message(FATAL_ERROR "libpcap not found")
 endif()
 
+# pthread
+find_package(Threads)
+target_link_libraries(zizzania-bin ${CMAKE_THREAD_LIBS_INIT})
+
 # [un]install
 install(PROGRAMS ${PROJECT_BINARY_DIR}/zizzania DESTINATION bin)
 add_custom_target(uninstall xargs rm < install_manifest.txt)
