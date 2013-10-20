@@ -216,8 +216,8 @@ int zizzania_process_packet(struct zizzania *z,
                 }
 
                 /* llc+snap header */
-                pkt += sizeof(struct ieee80211_mac_header);
-                pkt += (pkt[0] == 0x88 ? 2 : 0); /* (2 more byte if qos data) */
+                pkt += sizeof(struct ieee80211_mac_header)
+                    + (pkt[0] == 0x88 ? 2 : 0); /* (2 more byte if qos data) */
                 llc_snap_header = (struct ieee8022_llc_snap_header *)pkt;
 
                 /* check snap+eapol presence */
