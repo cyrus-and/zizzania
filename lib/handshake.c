@@ -258,7 +258,6 @@ int zz_process_packet(zz_t *zz,
                     /* update with this packet */
                     zz_update(zz, bssid, client_addr, client, &client_info);
                 } else {
-#if DEBUG
                     PRINTF("skipping invalid SNAP+EAPOL frame "
                            "(DSAP: 0x%02x, SSAP: 0x%02x, "
                            "control: 0x%02x, ULP: 0x%04hx) "
@@ -267,7 +266,6 @@ int zz_process_packet(zz_t *zz,
                            llc_snap_header->control,
                            htobe16(llc_snap_header->type),
                            source_str, destination_str, bssid_str);
-#endif
 
                     /* dump non eapol packets for finished clients only */
                     if (!client->need_set && zz->dumper) {
@@ -275,24 +273,18 @@ int zz_process_packet(zz_t *zz,
                     }
                 }
             }
-#if DEBUG
             else {
                 PRINTF("skipping target %s", bssid_str);
             }
-#endif
         }
-#if DEBUG
         else {
             PRINTF("skipping broadcast message from %s @ %s",
                    source_str, bssid_str);
         }
-#endif
     }
-#if DEBUG
     else {
         PRINT("skipping message due to frame direction");
     }
-#endif
 
     return 1;
 }
