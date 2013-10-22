@@ -25,11 +25,11 @@ struct client_info {
     uint16_t flags;
 };
 
-static int zizzania_enqueue_dispatcher_action(struct zizzania *z, int action,
-                                              const ieee80211_addr_t client,
-                                              const ieee80211_addr_t bssid) {
-    if (!z->setup.passive) {
-        struct zizzania_killer_message message;
+static int zz_enqueue_dispatcher_action(zz_t *zz, int action,
+                                        const ieee80211_addr_t client,
+                                        const ieee80211_addr_t bssid) {
+    if (!zz->setup.passive) {
+        struct zz_killer_message message;
 
         /* prepare message */
         message.action = action;
@@ -37,11 +37,9 @@ static int zizzania_enqueue_dispatcher_action(struct zizzania *z, int action,
         memcpy(message.bssid, bssid, 6);
 
         /* enqueue action */
-        if (write(z->comm[1], &message,
-                  sizeof(struct zizzania_killer_message)) == -1) {
-            zizzania_set_error_messagef
-                (z, "cannot communicate with the dispatcher");
-            z->stop = 1;
+        if (write(zz->comm[1], &message, sizeof(struct zz_killer_message)) == -1) {
+            zz_set_error_messagef(zz, "cannot communicate with the dispatcher");
+            zz->stop = 1;
             return 0;
         }
     }
@@ -49,10 +47,10 @@ static int zizzania_enqueue_dispatcher_action(struct zizzania *z, int action,
     return 1;
 }
 
-static int zizzania_update(struct zizzania *z, const ieee80211_addr_t target,
-                           const ieee80211_addr_t client_addr,
-                           struct client *client,
-                           const struct client_info *client_info) {
+static int zz_update(zz_t *zz, const ieee80211_addr_t target,
+                     const ieee80211_addr_t client_addr,
+                     struct client *client,
+                     const struct client_info *client_info) {
     int sequence;
 
     /* check EAPOL flags */
@@ -111,22 +109,21 @@ static int zizzania_update(struct zizzania *z, const ieee80211_addr_t target,
                    source_str, bssid_str);
 
             /* notify to the user */
-            if (z->setup.on_handshake) {
-                z->setup.on_handshake(target, client_addr);
+            if (zz->setup.on_handshake) {
+                zz->setup.on_handshake(target, client_addr);
             }
 
             /* notify to the dispatcher */
-            return zizzania_enqueue_dispatcher_action(z, ZIZZANIA_HANDSHAKE,
-                                                      client_addr, target);
+            return zz_enqueue_dispatcher_action(zz, ZZ_HANDSHAKE, client_addr, target);
         }
     }
 
     return 1;
 }
 
-int zizzania_process_packet(struct zizzania *z,
-                            const struct pcap_pkthdr *pkt_header,
-                            const uint8_t *pkt) {
+int zz_process_packet(zz_t *zz,
+                      const struct pcap_pkthdr *pkt_header,
+                      const uint8_t *pkt) {
     const uint8_t *orig_pkt = pkt;
     struct ieee80211_radiotap_header *radiotap_header;
     struct ieee80211_mac_header *mac_header;
@@ -175,14 +172,14 @@ int zizzania_process_packet(struct zizzania *z,
             GHashTable *clients;
 
             /* automatically add target */
-            if (z->setup.auto_add_targets) {
-                if (zizzania_add_target(z, bssid)) {
+            if (zz->setup.auto_add_targets) {
+                if (zz_add_target(zz, bssid)) {
                     PRINTF("automatically adding target %s", bssid_str);
                 }
             }
 
             /* fetch client hashtable for this target */
-            clients = g_hash_table_lookup(z->targets, bssid);
+            clients = g_hash_table_lookup(zz->targets, bssid);
 
             /* check if interested in that target (useless when
                auto_add_targets) */
@@ -195,13 +192,13 @@ int zizzania_process_packet(struct zizzania *z,
                     PRINTF("adding new client %s", client_addr_str);
 
                     /* notify to the user */
-                    if (z->setup.on_new_client) {
-                        z->setup.on_new_client(bssid, client_addr);
+                    if (zz->setup.on_new_client) {
+                        zz->setup.on_new_client(bssid, client_addr);
                     }
 
                     /* notify to the dispatcher */
-                    if (!zizzania_enqueue_dispatcher_action
-                        (z, ZIZZANIA_NEW_CLIENT, client_addr, bssid)) {
+                    if (!zz_enqueue_dispatcher_action
+                        (zz, ZZ_NEW_CLIENT, client_addr, bssid)) {
                         return 0;
                     }
 
@@ -229,8 +226,8 @@ int zizzania_process_packet(struct zizzania *z,
 
                     /* dump every eapol packets anyway this is a quick and dirty
                        way to cope with reconnections */
-                    if (z->dumper) {
-                        pcap_dump((u_char *)z->dumper, pkt_header, orig_pkt);
+                    if (zz->dumper) {
+                        pcap_dump((u_char *)zz->dumper, pkt_header, orig_pkt);
                     }
 
                     /* eapol message for finished clients triggers a reset since
@@ -241,8 +238,8 @@ int zizzania_process_packet(struct zizzania *z,
                                client_addr_str);
 
                         /* notify to the dispatcher */
-                        zizzania_enqueue_dispatcher_action
-                            (z, ZIZZANIA_NEW_CLIENT, client_addr, bssid);
+                        zz_enqueue_dispatcher_action
+                            (zz, ZZ_NEW_CLIENT, client_addr, bssid);
 
                         /* reinitialize client */
                         client->need_set = 0xf; /* 0b1111 */
@@ -259,8 +256,7 @@ int zizzania_process_packet(struct zizzania *z,
                     client_info.flags = be16toh(authentication_header->flags);
 
                     /* update with this packet */
-                    zizzania_update (z, bssid, client_addr,
-                                     client, &client_info);
+                    zz_update(zz, bssid, client_addr, client, &client_info);
                 } else {
 #if DEBUG
                     PRINTF("skipping invalid SNAP+EAPOL frame "
@@ -274,8 +270,8 @@ int zizzania_process_packet(struct zizzania *z,
 #endif
 
                     /* dump non eapol packets for finished clients only */
-                    if (!client->need_set && z->dumper) {
-                        pcap_dump((u_char *)z->dumper, pkt_header, orig_pkt);
+                    if (!client->need_set && zz->dumper) {
+                        pcap_dump((u_char *)zz->dumper, pkt_header, orig_pkt);
                     }
                 }
             }

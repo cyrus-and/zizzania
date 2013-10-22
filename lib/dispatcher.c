@@ -7,8 +7,8 @@
 
 #define DISPATCHER_TIMEOUT 5
 
-void * zizzania_dispatcher(void *arg) {
-    struct zizzania *z = arg;
+void * zz_dispatcher(void *arg) {
+    zz_t *zz = arg;
     sigset_t set;
     struct timespec timeout = {0};
 
@@ -19,12 +19,12 @@ void * zizzania_dispatcher(void *arg) {
     timeout.tv_sec = DISPATCHER_TIMEOUT;
 
     /* wait for events */
-    while (!z->stop) {
+    while (!zz->stop) {
         switch (errno = 0, sigtimedwait(&set, NULL, &timeout)) {
         case SIGINT:
         case SIGTERM:
             PRINT("signal catched");
-            z->stop = 1;
+            zz->stop = 1;
             continue;
 
         case -1:
@@ -36,9 +36,9 @@ void * zizzania_dispatcher(void *arg) {
         }
 
         /* deauthenticate clients (if not passive) */
-        if (!z->setup.passive) {
-            if (!zizzania_start_killer(z)) {
-                z->stop = 1;
+        if (!zz->setup.passive) {
+            if (!zz_start_killer(zz)) {
+                zz->stop = 1;
                 return (void *)0;
             }
         }

@@ -18,7 +18,7 @@
 #define MIN_SNAPLEN 128
 #define MAX_SNAPLEN 65535
 
-static void zizzania_drop_root(struct zizzania *z) {
+static void zz_drop_root(zz_t *zz) {
     /* nothing to do for non-root users */
     if (getuid() == 0) {
         const char *sudo_user;
@@ -49,46 +49,45 @@ static void zizzania_drop_root(struct zizzania *z) {
     }
 }
 
-int zizzania_initialize(struct zizzania *z) {
-    memset(z, 0, sizeof(struct zizzania));
+int zz_initialize(zz_t *zz) {
+    memset(zz, 0, sizeof(zz_t));
 
     /* bssids hashtable */
-    z->targets = g_hash_table_new_full(ieee80211_addr_hash,
+    zz->targets = g_hash_table_new_full(ieee80211_addr_hash,
                                        ieee80211_addr_equal,
                                        g_free,
                                        (GDestroyNotify)g_hash_table_destroy);
     /* kill list */
-    z->kill_list = g_hash_table_new_full(ieee80211_addr_hash,
+    zz->kill_list = g_hash_table_new_full(ieee80211_addr_hash,
                                          ieee80211_addr_equal,
                                          g_free, g_free);
 
     /* create non-blocking communication pipe */
-    if (pipe(z->comm) ||
-        fcntl(z->comm[0], F_SETFL, O_NONBLOCK) ||
-        fcntl(z->comm[1], F_SETFL, O_NONBLOCK)) {
-        zizzania_set_error_messagef
-            (z, "cannot create the non-blocking communication pipe");
+    if (pipe(zz->comm) ||
+        fcntl(zz->comm[0], F_SETFL, O_NONBLOCK) ||
+        fcntl(zz->comm[1], F_SETFL, O_NONBLOCK)) {
+        zz_set_error_messagef
+            (zz, "cannot create the non-blocking communication pipe");
         return 0;
     }
 
     return 1;
 }
 
-int zizzania_set_error_messagef(struct zizzania *z, const char *format, ...) {
+int zz_set_error_messagef(zz_t *zz, const char *format, ...) {
     int chk;
     va_list ap;
 
     va_start(ap, format);
-    chk = vsnprintf(z->error_buffer,
-                    ZIZZANIA_ERROR_BUFFER_SIZE + 1, format, ap);
+    chk = vsnprintf(zz->error_buffer, ZZ_ERROR_BUFFER_SIZE + 1, format, ap);
     va_end(ap);
 
-    return chk != ZIZZANIA_ERROR_BUFFER_SIZE;
+    return chk != ZZ_ERROR_BUFFER_SIZE;
 }
 
-int zizzania_add_target(struct zizzania *z, const ieee80211_addr_t target) {
+int zz_add_target(zz_t *zz, const ieee80211_addr_t target) {
     /* add a new bssid target */
-    if (!g_hash_table_lookup(z->targets, target)) {
+    if (!g_hash_table_lookup(zz->targets, target)) {
         GHashTable *clients;
 
         /* prepare target's hashtable */
@@ -96,14 +95,14 @@ int zizzania_add_target(struct zizzania *z, const ieee80211_addr_t target) {
                                         ieee80211_addr_equal,
                                         g_free, g_free);
 
-        g_hash_table_insert(z->targets, g_memdup(target, 6), clients);
+        g_hash_table_insert(zz->targets, g_memdup(target, 6), clients);
         return 1;
     }
 
     return 0;
 }
 
-int zizzania_start(struct zizzania *z) {
+int zz_start(zz_t *zz) {
     struct sigaction sa;
     sigset_t set;
     struct bpf_program fp;
@@ -114,58 +113,57 @@ int zizzania_start(struct zizzania *z) {
     int error = 0;
 
     /* get pcap handle live */
-    if (z->setup.live) {
+    if (zz->setup.live) {
         int snaplen;
 
-        *z->error_buffer = '\0';
-        snaplen = *(z->setup.output) ? MAX_SNAPLEN : MIN_SNAPLEN;
-        z->handler = pcap_open_live(z->setup.input, snaplen,
-                                    1, READ_TIMEOUT, z->error_buffer);
+        *zz->error_buffer = '\0';
+        snaplen = *(zz->setup.output) ? MAX_SNAPLEN : MIN_SNAPLEN;
+        zz->handler = pcap_open_live(zz->setup.input, snaplen,
+                                    1, READ_TIMEOUT, zz->error_buffer);
 
         /* warning */
-        if (*z->error_buffer) {
-            PRINT(z->error_buffer);
+        if (*zz->error_buffer) {
+            PRINT(zz->error_buffer);
         }
     }
     /* from file */
     else {
-        z->handler = pcap_open_offline(z->setup.input, z->error_buffer);
-        z->setup.passive = 1;
+        zz->handler = pcap_open_offline(zz->setup.input, zz->error_buffer);
+        zz->setup.passive = 1;
     }
 
-    if (!z->handler) {
+    if (!zz->handler) {
         return 0;
     }
 
     /* drop root privileges */
-    zizzania_drop_root(z);
+    zz_drop_root(zz);
 
     /* check datalink type */
-    dlt = pcap_datalink(z->handler);
+    dlt = pcap_datalink(zz->handler);
     PRINTF("datalink type %s", pcap_datalink_val_to_name(dlt));
 
-    if (pcap_datalink(z->handler) != DLT_IEEE802_11_RADIO) {
+    if (pcap_datalink(zz->handler) != DLT_IEEE802_11_RADIO) {
         const char *expected_dlt;
 
         expected_dlt = pcap_datalink_val_to_name (DLT_IEEE802_11_RADIO);
-        zizzania_set_error_messagef(z, "wrong device type/mode %s; %s expected",
-                                    pcap_datalink_val_to_name(dlt),
-                                    expected_dlt);
+        zz_set_error_messagef(zz, "wrong device type/mode %s; %s expected",
+                             pcap_datalink_val_to_name(dlt), expected_dlt);
         return 0;
     }
 
     /* set capture filter */
-    pcap_compile(z->handler, &fp, BPF, 1, -1);
-    pcap_setfilter(z->handler, &fp);
+    pcap_compile(zz->handler, &fp, BPF, 1, -1);
+    pcap_setfilter(zz->handler, &fp);
     pcap_freecode(&fp);
 
     /* open dumper */
-    if (*(z->setup.output)) {
-        PRINTF("dumping packets to %s", z->setup.output);
+    if (*(zz->setup.output)) {
+        PRINTF("dumping packets to %s", zz->setup.output);
 
-        z->dumper = pcap_dump_open(z->handler, z->setup.output);
-        if (!z->dumper) {
-            zizzania_set_error_messagef(z, pcap_geterr(z->handler));
+        zz->dumper = pcap_dump_open(zz->handler, zz->setup.output);
+        if (!zz->dumper) {
+            zz_set_error_messagef(zz, pcap_geterr(zz->handler));
             return 0;
         }
     }
@@ -174,7 +172,7 @@ int zizzania_start(struct zizzania *z) {
     memset(&sa, 0, sizeof(struct sigaction));
     sa.sa_handler = SIG_IGN;
     if (sigaction(SIGINT, &sa, NULL) || sigaction(SIGTERM, &sa, NULL)) {
-        zizzania_set_error_messagef(z, "unable to set signal action");
+        zz_set_error_messagef(zz, "unable to set signal action");
         return 0;
     }
 
@@ -182,35 +180,35 @@ int zizzania_start(struct zizzania *z) {
        sigtimedwait) */
     sigfillset(&set);
     if (pthread_sigmask(SIG_SETMASK, &set, NULL)) {
-        zizzania_set_error_messagef(z, "unable to set signal mask");
+        zz_set_error_messagef(zz, "unable to set signal mask");
         return 0;
     }
 
     /* start dispatcher */
-    if (pthread_create(&z->dispatcher, NULL, zizzania_dispatcher, z)) {
-        zizzania_set_error_messagef(z, "unable to start dispatcher thread");
+    if (pthread_create(&zz->dispatcher, NULL, zz_dispatcher, zz)) {
+        zz_set_error_messagef(zz, "unable to start dispatcher thread");
         return 0;
     }
 
     /* packet loop */
-    while (!z->stop) {
-        switch (pcap_next_ex(z->handler, &packet_header, &packet)) {
+    while (!zz->stop) {
+        switch (pcap_next_ex(zz->handler, &packet_header, &packet)) {
         case 0: /* timeout */
             break; /* recheck flag and eventually start over */
 
         case 1: /* no problem */
-            error = !zizzania_process_packet(z, packet_header, packet);
+            error = !zz_process_packet(zz, packet_header, packet);
             break;
 
         case -1: /* error */
-            PRINT(pcap_geterr(z->handler));
-            zizzania_set_error_messagef(z, pcap_geterr(z->handler));
-            error = z->stop = 1;
+            PRINT(pcap_geterr(zz->handler));
+            zz_set_error_messagef(zz, pcap_geterr(zz->handler));
+            error = zz->stop = 1;
             break;
 
         case -2: /* end of file */
             PRINT("eof");
-            z->stop = 1;
+            zz->stop = 1;
             break;
         }
     }
@@ -218,10 +216,10 @@ int zizzania_start(struct zizzania *z) {
     PRINT("shuting down the dispatcher");
 
     /* force dispatcher wakeup on errors on this thread */
-    pthread_kill(z->dispatcher, SIGTERM);
+    pthread_kill(zz->dispatcher, SIGTERM);
 
     /* join dispatcher thread */
-    if (pthread_join(z->dispatcher, (void *)&retval)) {
+    if (pthread_join(zz->dispatcher, (void *)&retval)) {
         PRINT("cannot join the dispatcher");
         return 0;
     }
@@ -229,14 +227,14 @@ int zizzania_start(struct zizzania *z) {
     return !error && retval;
 }
 
-void zizzania_finalize(struct zizzania *z) {
-    if (z->dumper) {
-        pcap_dump_close(z->dumper);
+void zz_finalize(zz_t *zz) {
+    if (zz->dumper) {
+        pcap_dump_close(zz->dumper);
     }
 
-    pcap_close(z->handler);
-    close(z->comm[0]);
-    close(z->comm[1]);
-    g_hash_table_destroy(z->targets);
-    g_hash_table_destroy(z->kill_list);
+    pcap_close(zz->handler);
+    close(zz->comm[0]);
+    close(zz->comm[1]);
+    g_hash_table_destroy(zz->targets);
+    g_hash_table_destroy(zz->kill_list);
 }

@@ -1,6 +1,6 @@
-#ifndef _ZIZZANIA_DISPATCHER_H
-#define _ZIZZANIA_DISPATCHER_H
+#ifndef _ZZ_DISPATCHER_H
+#define _ZZ_DISPATCHER_H
 
-void * zizzania_dispatcher(void *arg);
+void * zz_dispatcher(void *arg);
 
 #endif

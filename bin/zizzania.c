@@ -4,8 +4,8 @@
 #include <string.h>
 #include "zizzania.h"
 
-#define DUMP_ERROR_AND_DIE(z) { \
-        fprintf(stderr, "# %s\n", z.error_buffer); \
+#define DUMP_ERROR_AND_DIE(zz) { \
+        fprintf(stderr, "# %s\n", zz.error_buffer); \
         return EXIT_FAILURE; \
     }
 
@@ -29,7 +29,7 @@ static void print_usage() {
             "\n");
 }
 
-static int parse_options(struct zizzania *z, int argc, char *argv[]) {
+static int parse_options(zz_t *zz, int argc, char *argv[]) {
     int opt;
     int n_target = 0;
     int n_input = 0;
@@ -39,7 +39,7 @@ static int parse_options(struct zizzania *z, int argc, char *argv[]) {
     while (opt = getopt(argc, argv, ":ab:i:r:w:nv"), opt != -1) {
         switch (opt) {
         case 'a':
-            z->setup.auto_add_targets = 1;
+            zz->setup.auto_add_targets = 1;
             break;
 
         case 'b': {
@@ -47,45 +47,43 @@ static int parse_options(struct zizzania *z, int argc, char *argv[]) {
 
             /* parse bssid address */
             if (!ieee80211_addr_sscan(bssid, optarg)) {
-                zizzania_set_error_messagef
-                    (z, "Invalid MAC address '%s'", optarg);
+                zz_set_error_messagef(zz, "Invalid MAC address '%s'", optarg);
                 return 0;
             }
 
             /* use this address as target */
-            zizzania_add_target(z, bssid);
+            zz_add_target(zz, bssid);
             n_target++;
             break;
         }
 
         case 'i':
         case 'r':
-            strncpy(z->setup.input, optarg, ZIZZANIA_MAX_PATH);
-            z->setup.live = (opt == 'i');
+            strncpy(zz->setup.input, optarg, ZZ_MAX_PATH);
+            zz->setup.live = (opt == 'i');
             n_input++;
             break;
 
         case 'w':
-            strncpy(z->setup.output, optarg, ZIZZANIA_MAX_PATH);
-            dump_to_stdout = (strcmp(z->setup.output, "-") == 0);
+            strncpy(zz->setup.output, optarg, ZZ_MAX_PATH);
+            dump_to_stdout = (strcmp(zz->setup.output, "-") == 0);
             n_output++;
             break;
 
         case 'n':
-            z->setup.passive = 1;
+            zz->setup.passive = 1;
             break;
 
         case 'v':
-            z->setup.verbose = 1;
+            zz->setup.verbose = 1;
             break;
 
         case ':':
-            zizzania_set_error_messagef
-                (z, "Missing argument for option '%c'", optopt);
+            zz_set_error_messagef(zz, "Missing argument for option '%c'", optopt);
             return 0;
 
         default:
-            zizzania_set_error_messagef(z, "Unknown option '%c'", optopt);
+            zz_set_error_messagef(zz, "Unknown option '%c'", optopt);
             return 0;
         }
     }
@@ -94,47 +92,45 @@ static int parse_options(struct zizzania *z, int argc, char *argv[]) {
 
     /* warn about no input */
     if (n_input == 0) {
-        zizzania_set_error_messagef
-            (z, "No input specified, use either -r or -i");
+        zz_set_error_messagef(zz, "No input specified, use either -r or -i");
         return 0;
     }
 
     /* warn about multiple input specified */
     if (n_input > 1) {
-        zizzania_set_error_messagef(z, "Multiple input specified");
+        zz_set_error_messagef(zz, "Multiple input specified");
         return 0;
     }
 
     /* warn about multiple output specified */
     if (n_output > 1) {
-        zizzania_set_error_messagef(z, "Multiple output specified");
+        zz_set_error_messagef(zz, "Multiple output specified");
         return 0;
     }
 
     /* warn about unparset options */
     if (optind != argc) {
-        zizzania_set_error_messagef(z, "Unparsed option '%s'", argv[optind]);
+        zz_set_error_messagef(zz, "Unparsed option '%s'", argv[optind]);
         return 0;
     }
 
     /* warn about nothing to do */
-    if (!z->setup.auto_add_targets && n_target == 0) {
-        zizzania_set_error_messagef(z, "Specify at least one target BSSID (-b)"
-                                    " or force auto mode (-a)");
+    if (!zz->setup.auto_add_targets && n_target == 0) {
+        zz_set_error_messagef(zz, "Specify at least one target BSSID (-b)"
+                             " or force auto mode (-a)");
         return 0;
     }
 
     /* warn about useless options */
-    if (z->setup.auto_add_targets && n_target > 0) {
-        zizzania_set_error_messagef
-            (z, "Option -a includes every combination of -b");
+    if (zz->setup.auto_add_targets && n_target > 0) {
+        zz_set_error_messagef(zz, "Option -a includes every combination of -b");
         return 0;
     }
 
     /* warn about passive mode while offline */
-    if (z->setup.passive && !z->setup.live) {
-        zizzania_set_error_messagef
-            (z, "Offline sessions are always passive there's no need of -n");
+    if (zz->setup.passive && !zz->setup.live) {
+        zz_set_error_messagef
+            (zz, "Offline sessions are always passive there's no need of -n");
         return 0;
     }
 
@@ -164,24 +160,24 @@ static void on_handshake(const ieee80211_addr_t bssid,
 }
 
 int main(int argc, char *argv[]) {
-    struct zizzania z;
+    zz_t zz;
 
-    if (!zizzania_initialize(&z)) {
-        DUMP_ERROR_AND_DIE(z);
+    if (!zz_initialize(&zz)) {
+        DUMP_ERROR_AND_DIE(zz);
     }
 
-    if (!parse_options(&z, argc, argv)) {
+    if (!parse_options(&zz, argc, argv)) {
         print_usage();
-        DUMP_ERROR_AND_DIE(z);
+        DUMP_ERROR_AND_DIE(zz);
     }
 
-    z.setup.on_new_client = on_new_client;
-    z.setup.on_handshake = on_handshake;
+    zz.setup.on_new_client = on_new_client;
+    zz.setup.on_handshake = on_handshake;
 
-    if (!zizzania_start(&z)) {
-        DUMP_ERROR_AND_DIE(z);
+    if (!zz_start(&zz)) {
+        DUMP_ERROR_AND_DIE(zz);
     }
 
-    zizzania_finalize(&z);
+    zz_finalize(&zz);
     return EXIT_SUCCESS;
 }

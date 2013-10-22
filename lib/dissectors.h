@@ -1,5 +1,5 @@
-#ifndef _ZIZZANIA_DISSECTORS_H
-#define _ZIZZANIA_DISSECTORS_H
+#ifndef _ZZ_DISSECTORS_H
+#define _ZZ_DISSECTORS_H
 
 #include <glib.h>
 #include <stdint.h>

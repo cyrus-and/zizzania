@@ -19,13 +19,13 @@
     "\x00\x00"                 /* sequence control */   \
     "\x07\x00"                 /* reason */
 
-static int zizzania_deauthenticate(struct zizzania *z) {
+static int zz_deauthenticate(zz_t *zz) {
     GHashTableIter i;
     const ieee80211_addr_t client_addr;
     const uint8_t *packet;
 
     /* scan hashtable */
-    for (g_hash_table_iter_init(&i, z->kill_list);
+    for (g_hash_table_iter_init(&i, zz->kill_list);
          g_hash_table_iter_next(&i, (void *)&client_addr, (void *)&packet);) {
         struct ieee80211_mac_header *mac_header;
         uint16_t seq;
@@ -37,10 +37,9 @@ static int zizzania_deauthenticate(struct zizzania *z) {
         }
 
         /* send packet */
-        if (pcap_inject(z->handler, packet,
+        if (pcap_inject(zz->handler, packet,
                         DEAUTHENTICATION_PACKET_SIZE) == -1) {
-            zizzania_set_error_messagef
-                (z, "cannot send deauthentication packet");
+            zz_set_error_messagef(zz, "cannot send deauthentication packet");
             return 0;
         }
 
@@ -55,16 +54,16 @@ static int zizzania_deauthenticate(struct zizzania *z) {
     return 1;
 }
 
-int zizzania_start_killer(struct zizzania *z) {
-    struct zizzania_killer_message message;
+int zz_start_killer(zz_t *zz) {
+    struct zz_killer_message message;
 
     PRINT("waking up killer");
 
     /* while there are pending messages */
-    while (read(z->comm[0], &message,
-                sizeof(struct zizzania_killer_message)) > 0) {
+    while (read(zz->comm[0], &message,
+                sizeof(struct zz_killer_message)) > 0) {
         switch (message.action) {
-        case ZIZZANIA_NEW_CLIENT: {
+        case ZZ_NEW_CLIENT: {
             struct ieee80211_mac_header *mac_header;
             u_char *packet = g_memdup(DEAUTHENTICATION_PACKET,
                                       DEAUTHENTICATION_PACKET_SIZE);
@@ -77,18 +76,18 @@ int zizzania_start_killer(struct zizzania *z) {
             memcpy(mac_header->address_3, message.bssid, 6);
 
             /* save it in the hashtable */
-            g_hash_table_insert(z->kill_list,
+            g_hash_table_insert(zz->kill_list,
                                 g_memdup(message.client, 6), packet);
             break;
         }
 
-        case ZIZZANIA_HANDSHAKE:
+        case ZZ_HANDSHAKE:
             /* stop deauthenticating it */
-            g_hash_table_remove(z->kill_list, message.client);
+            g_hash_table_remove(zz->kill_list, message.client);
             break;
         }
     }
 
     /* send deauthentication packets */
-    return zizzania_deauthenticate(z);
+    return zz_deauthenticate(zz);
 }
