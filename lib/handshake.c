@@ -1,8 +1,13 @@
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 #include "debug.h"
 #include "killer.h"
 #include "handshake.h"
+
+/* seconds to wait before taking into account a client reconnection, after an
+   EAPOL packet of a finished client arrives */
+#define RECONNECTION_GRACE_TIME 5
 
 #define EAPOL_FLAGS_MASK 0x0dc8
 #define EAPOL_FLAGS_1 0x0088
@@ -18,6 +23,7 @@ char client_addr_str[18];
 struct client {
     uint8_t need_set;
     int64_t start_counter;
+    time_t handshake_timestamp;
 };
 
 struct client_info {
@@ -107,6 +113,9 @@ static int zz_update(zz_t *zz, const ieee80211_addr_t target,
         if (client->need_set == 0) {
             PRINTF("got full handshake for client %s @ %s",
                    source_str, bssid_str);
+
+            /* save timestamp */
+            time(&client->handshake_timestamp);
 
             /* notify to the user */
             if (zz->setup.on_handshake) {
@@ -233,7 +242,8 @@ int zz_process_packet(zz_t *zz,
                     /* eapol message for finished clients triggers a reset since
                        it's probably a reconnection so a new full handshake is
                        needed */
-                    if (!client->need_set) {
+                    if (!client->need_set &&
+                        time(NULL) - client->handshake_timestamp > RECONNECTION_GRACE_TIME ) {
                         PRINTF("possible reconnection of client %s",
                                client_addr_str);
 
