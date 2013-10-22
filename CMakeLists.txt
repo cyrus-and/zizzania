@@ -18,7 +18,6 @@ target_link_libraries(zizzania-bin zizzania)
 # build modes
 set(CMAKE_C_FLAGS "-O3 -Os")
 set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
-set(CMAKE_C_FLAGS_VDEBUG "-g -DDEBUG -DVDEBUG")
 
 # glib
 pkg_check_modules(GLIB2 REQUIRED glib-2.0)

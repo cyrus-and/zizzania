@@ -30,11 +30,11 @@ static int zizzania_deauthenticate(struct zizzania *z) {
         struct ieee80211_mac_header *mac_header;
         uint16_t seq;
 
-#ifdef DEBUG
-        char client_addr_str[18];
-        ieee80211_addr_sprint(client_addr, client_addr_str);
-        PRINTF("deauthenticating client %s", client_addr_str);
-#endif
+        if (zz->setup.verbose) {
+            char client_addr_str[18];
+            ieee80211_addr_sprint(client_addr, client_addr_str);
+            PRINTF("deauthenticating client %s", client_addr_str);
+        }
 
         /* send packet */
         if (pcap_inject(z->handler, packet,

@@ -9,12 +9,11 @@
 #define EAPOL_FLAGS_2_4 0x0108
 #define EAPOL_FLAGS_3 0x01c8
 
-#ifdef DEBUG
+/* debug */
 char bssid_str[18];
 char source_str[18];
 char destination_str[18];
 char client_addr_str[18];
-#endif
 
 struct client {
     uint8_t need_set;
@@ -159,13 +158,13 @@ int zizzania_process_packet(struct zizzania *z,
             client_addr = destination;
         }
 
-#ifdef DEBUG
-        /* prepare address strings */
-        ieee80211_addr_sprint(bssid, bssid_str);
-        ieee80211_addr_sprint(source, source_str);
-        ieee80211_addr_sprint(destination, destination_str);
-        ieee80211_addr_sprint(client_addr, client_addr_str);
-#endif
+        if (zz->setup.verbose) {
+            /* prepare address strings */
+            ieee80211_addr_sprint(bssid, bssid_str);
+            ieee80211_addr_sprint(source, source_str);
+            ieee80211_addr_sprint(destination, destination_str);
+            ieee80211_addr_sprint(client_addr, client_addr_str);
+        }
 
         /* skip broadcast/multicast frames */
         if (memcmp(destination, BROADCAST_MAC_ADDRESS, 6) != 0 &&
@@ -263,7 +262,7 @@ int zizzania_process_packet(struct zizzania *z,
                     zizzania_update (z, bssid, client_addr,
                                      client, &client_info);
                 } else {
-#if VDEBUG
+#if DEBUG
                     PRINTF("skipping invalid SNAP+EAPOL frame "
                            "(DSAP: 0x%02x, SSAP: 0x%02x, "
                            "control: 0x%02x, ULP: 0x%04hx) "
@@ -280,20 +279,20 @@ int zizzania_process_packet(struct zizzania *z,
                     }
                 }
             }
-#if VDEBUG
+#if DEBUG
             else {
                 PRINTF("skipping target %s", bssid_str);
             }
 #endif
         }
-#if VDEBUG
+#if DEBUG
         else {
             PRINTF("skipping broadcast message from %s @ %s",
                    source_str, bssid_str);
         }
 #endif
     }
-#if VDEBUG
+#if DEBUG
     else {
         PRINT("skipping message due to frame direction");
     }
