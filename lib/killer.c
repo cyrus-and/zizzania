@@ -65,10 +65,11 @@ int zz_start_killer(zz_t *zz) {
         switch (message.action) {
         case ZZ_NEW_CLIENT: {
             struct ieee80211_mac_header *mac_header;
-            u_char *packet = g_memdup(DEAUTHENTICATION_PACKET,
-                                      DEAUTHENTICATION_PACKET_SIZE);
+            u_char *packet;
 
             /* craft packet */
+            packet = g_memdup(DEAUTHENTICATION_PACKET,
+                              DEAUTHENTICATION_PACKET_SIZE);
             mac_header = (struct ieee80211_mac_header *)
                 (packet + sizeof(struct ieee80211_radiotap_header));
             memcpy(mac_header->address_1, message.client, 6);
