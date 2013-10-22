@@ -18,7 +18,7 @@
 #define MIN_SNAPLEN 128
 #define MAX_SNAPLEN 65535
 
-static void zizzania_drop_root() {
+static void zizzania_drop_root(struct zizzania *z) {
     /* nothing to do for non-root users */
     if (getuid() == 0) {
         const char *sudo_user;
@@ -138,7 +138,7 @@ int zizzania_start(struct zizzania *z) {
     }
 
     /* drop root privileges */
-    zizzania_drop_root();
+    zizzania_drop_root(z);
 
     /* check datalink type */
     dlt = pcap_datalink(z->handler);

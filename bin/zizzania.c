@@ -25,6 +25,7 @@ static void print_usage() {
             "    -a          : auto discover BSSIDs\n"
             "    -n          : passively look for handshakes\n"
             "    -w          : dump captured packets to <file> (- for stdout)\n"
+            "    -v          : print verbose messages\n"
             "\n");
 }
 
@@ -35,7 +36,7 @@ static int parse_options(struct zizzania *z, int argc, char *argv[]) {
     int n_output = 0;
 
     opterr = 0;
-    while (opt = getopt(argc, argv, ":ab:i:r:w:n"), opt != -1) {
+    while (opt = getopt(argc, argv, ":ab:i:r:w:nv"), opt != -1) {
         switch (opt) {
         case 'a':
             z->setup.auto_add_targets = 1;
@@ -72,6 +73,10 @@ static int parse_options(struct zizzania *z, int argc, char *argv[]) {
 
         case 'n':
             z->setup.passive = 1;
+            break;
+
+        case 'v':
+            z->setup.verbose = 1;
             break;
 
         case ':':

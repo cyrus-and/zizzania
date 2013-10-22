@@ -21,6 +21,7 @@ struct zizzania {
         int passive;
         client_notify on_new_client;
         client_notify on_handshake;
+        int verbose;
     } setup;
 
     char error_buffer[ZIZZANIA_ERROR_BUFFER_SIZE + 1];
