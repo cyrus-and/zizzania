@@ -8,6 +8,8 @@ environment variable, for example:
 
     export DEVICE=eth0
 
+Note that these tools are installed system wide with `sudo make install`.
+
 zz-scan
 -------
 
