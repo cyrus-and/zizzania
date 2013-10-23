@@ -45,4 +45,7 @@ target_link_libraries(zizzania-bin ${CMAKE_THREAD_LIBS_INIT})
 
 # [un]install
 install(PROGRAMS ${PROJECT_BINARY_DIR}/zizzania DESTINATION bin)
+install(DIRECTORY tools/ DESTINATION sbin
+        FILES_MATCHING PATTERN "zz-*"
+        PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
 add_custom_target(uninstall xargs rm < install_manifest.txt)
