@@ -1,6 +1,6 @@
 #!/bin/bash
-USAGE='Usage: scan.sh device'
+USAGE='Usage: scan.sh'
 trap 'echo "$USAGE"; exit 1' ERR
 
-DEV=$1
-iw dev $DEV scan | less
+DEVICE=${DEVICE:-wlan0}
+iw dev $DEVICE scan 2>&1 | less

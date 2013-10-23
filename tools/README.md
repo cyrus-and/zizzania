@@ -2,40 +2,44 @@ Tools
 =====
 
 This directory contains a set of useful scripts for managing wireless
-devices. They require `ip` and `iw` executables and must be run as root user.
+devices. They require `ip` and `iw` executables and must be run as root
+user. The default device is `wlan0`, this can be changed by setting the `DEVICE`
+environment variable, for example:
+
+    export DEVICE=eth0
 
 scan.sh
 -------
 
-    scan.sh device
+    scan.sh
 
-List all the APs that are in range of `device`. Requires managed mode.
+List all the APs that are in range of the device. Requires managed mode.
 
 monitor.sh
 ----------
 
-    monitor.sh device
+    monitor.sh
 
-Set the operating mode of `device` to RFMON (required by zizzania).
+Set the operating mode of the device to RFMON (required by zizzania).
 
 managed.sh
 ----------
 
-    managed.sh device
+    managed.sh
 
-Set the operating mode of `device` back to managed.
+Set the operating mode of the device back to managed.
 
 channel.sh
 ----------
 
-    channel.sh device channel
+    channel.sh channel
 
-Set the operating channel of `device` to `channel`.
+Set the operating channel of the device to `channel`.
 
 channel-hop.sh
 --------------
 
-    channel-hop.sh device timeout channel...
+    channel-hop.sh timeout channel...
 
 Hop from one channel to another in a round-robin fashion every `timeout`
 seconds.

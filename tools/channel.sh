@@ -1,7 +1,7 @@
 #!/bin/bash
-USAGE='Usage: channel.sh device channel'
+USAGE='Usage: channel.sh channel'
 trap 'echo "$USAGE"; exit 1' ERR
 
-DEV=$1
-CHANNEL=$2
-iw dev $DEV set channel $CHANNEL
+DEVICE=${DEVICE:-wlan0}
+CHANNEL=$1
+iw dev $DEVICE set channel $CHANNEL

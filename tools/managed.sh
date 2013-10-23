@@ -1,8 +1,8 @@
 #!/bin/bash
-USAGE='Usage: managed.sh device'
+USAGE='Usage: managed.sh'
 trap 'echo "$USAGE"; exit 1' ERR
 
-DEV=$1
-ip link set $DEV down
-iw dev $DEV set type managed
-ip link set $DEV up
+DEVICE=${DEVICE:-wlan0}
+ip link set $DEVICE down
+iw dev $DEVICE set type managed
+ip link set $DEVICE up

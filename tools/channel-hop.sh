@@ -1,13 +1,13 @@
 #!/bin/bash
-USAGE='Usage: channel-hop.sh device timeout channel...'
+USAGE='Usage: channel-hop.sh timeout channel...'
 trap 'echo "$USAGE"; exit 1' ERR
 
-DEV=$1
-TIMEOUT=$2
+DEVICE=${DEVICE:-wlan0}
+TIMEOUT=$1
 shift 2
 while true ; do
     for CHANNEL in $@ ; do
-        iw dev $DEV set channel $CHANNEL
+        iw dev $DEVICE set channel $CHANNEL
         echo "Channel $CHANNEL"
         sleep $TIMEOUT
     done
