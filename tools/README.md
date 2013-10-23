@@ -18,9 +18,10 @@ List all the APs that are in range of the device. Requires managed mode.
 monitor.sh
 ----------
 
-    monitor.sh
+    monitor.sh [channel]
 
-Set the operating mode of the device to RFMON (required by zizzania).
+Set the operating mode of the device to RFMON (required by zizzania). If
+specified, also set the operating channel.
 
 managed.sh
 ----------
