@@ -50,6 +50,7 @@ Run zizzania without arguments to display a brief usage message:
         -a          : auto discover BSSIDs
         -n          : passively look for handshakes
         -w          : dump captured packets to <file> (- for stdout)
+        -v          : print verbose messages
 
 Take a look around:
 
