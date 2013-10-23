@@ -8,39 +8,39 @@ environment variable, for example:
 
     export DEVICE=eth0
 
-scan.sh
+zz-scan
 -------
 
-    scan.sh
+    zz-scan
 
 List all the APs that are in range of the device. Requires managed mode.
 
-monitor.sh
+zz-monitor
 ----------
 
-    monitor.sh [channel]
+    zz-monitor [channel]
 
 Set the operating mode of the device to RFMON (required by zizzania). If
 specified, also set the operating channel.
 
-managed.sh
+zz-managed
 ----------
 
-    managed.sh
+    zz-managed
 
 Set the operating mode of the device back to managed.
 
-channel.sh
+zz-channel
 ----------
 
-    channel.sh channel
+    zz-channel channel
 
 Set the operating channel of the device to `channel`.
 
-channel-hop.sh
+zz-channel-hop
 --------------
 
-    channel-hop.sh timeout channel...
+    zz-channel-hop timeout channel...
 
 Hop from one channel to another in a round-robin fashion every `timeout`
 seconds.
