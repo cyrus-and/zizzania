@@ -91,7 +91,7 @@ static int zz_update(zz_t *zz, const ieee80211_addr_t target,
 
     default:
         PRINTF("unrecognizable EAPOL flags 0x%04hx of %s @ %s",
-                client_info->flags, source_str, bssid_str);
+               client_info->flags, source_str, bssid_str);
         return 1;
     }
 

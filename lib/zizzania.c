@@ -54,13 +54,13 @@ int zz_initialize(zz_t *zz) {
 
     /* bssids hashtable */
     zz->targets = g_hash_table_new_full(ieee80211_addr_hash,
-                                       ieee80211_addr_equal,
-                                       g_free,
-                                       (GDestroyNotify)g_hash_table_destroy);
+                                        ieee80211_addr_equal,
+                                        g_free,
+                                        (GDestroyNotify)g_hash_table_destroy);
     /* kill list */
     zz->kill_list = g_hash_table_new_full(ieee80211_addr_hash,
-                                         ieee80211_addr_equal,
-                                         g_free, g_free);
+                                          ieee80211_addr_equal,
+                                          g_free, g_free);
 
     /* create non-blocking communication pipe */
     if (pipe(zz->comm) ||
@@ -119,7 +119,7 @@ int zz_start(zz_t *zz) {
         *zz->error_buffer = '\0';
         snaplen = *(zz->setup.output) ? MAX_SNAPLEN : MIN_SNAPLEN;
         zz->handler = pcap_open_live(zz->setup.input, snaplen,
-                                    1, READ_TIMEOUT, zz->error_buffer);
+                                     1, READ_TIMEOUT, zz->error_buffer);
 
         /* warning */
         if (*zz->error_buffer) {
@@ -148,7 +148,7 @@ int zz_start(zz_t *zz) {
 
         expected_dlt = pcap_datalink_val_to_name (DLT_IEEE802_11_RADIO);
         zz_set_error_messagef(zz, "wrong device type/mode %s; %s expected",
-                             pcap_datalink_val_to_name(dlt), expected_dlt);
+                              pcap_datalink_val_to_name(dlt), expected_dlt);
         return 0;
     }
 

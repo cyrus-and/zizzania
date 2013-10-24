@@ -117,7 +117,7 @@ static int parse_options(zz_t *zz, int argc, char *argv[]) {
     /* warn about nothing to do */
     if (!zz->setup.auto_add_targets && n_target == 0) {
         zz_set_error_messagef(zz, "Specify at least one target BSSID (-b)"
-                             " or force auto mode (-a)");
+                              " or force auto mode (-a)");
         return 0;
     }
 
