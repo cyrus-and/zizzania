@@ -4,4 +4,5 @@ trap 'echo "$USAGE"; exit 1' ERR
 
 DEVICE=${DEVICE:-wlan0}
 CHANNEL=$1
+ip link set $DEVICE up
 iw dev $DEVICE set channel $CHANNEL

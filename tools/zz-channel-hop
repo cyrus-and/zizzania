@@ -4,6 +4,7 @@ trap 'echo "$USAGE"; exit 1' ERR
 
 DEVICE=${DEVICE:-wlan0}
 TIMEOUT=$1
+ip link set $DEVICE up
 shift 2
 while true ; do
     for CHANNEL in $@ ; do
