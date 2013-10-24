@@ -173,11 +173,10 @@ int zz_process_packet(zz_t *zz,
         }
 
         /* skip broadcast/multicast frames */
-        if (memcmp(destination, BROADCAST_MAC_ADDRESS, 6) != 0 &&
-            memcmp(destination, IPV4_MULTICAST_MAC_ADDRESS_PFX,
-                   IPV4_MULTICAST_MAC_ADDRESS_PFX_LENGTH) != 0 &&
-            memcmp(destination, IPV6_MULTICAST_MAC_ADDRESS_PFX,
-                   IPV6_MULTICAST_MAC_ADDRESS_PFX_LENGTH) != 0) {
+        if (memcmp(destination, BROADCAST_MAC_ADDRESS, 6) != 0 && // broadcast
+            // the least significative bit of the most significative byte
+            // denotes multicast addresses
+            (destination[0] & 1) == 0) {
             GHashTable *clients;
 
             /* automatically add target */
