@@ -146,7 +146,7 @@ int zz_start(zz_t *zz) {
     if (pcap_datalink(zz->handler) != DLT_IEEE802_11_RADIO) {
         const char *expected_dlt;
 
-        expected_dlt = pcap_datalink_val_to_name (DLT_IEEE802_11_RADIO);
+        expected_dlt = pcap_datalink_val_to_name(DLT_IEEE802_11_RADIO);
         zz_set_error_messagef(zz, "wrong device type/mode %s; %s expected",
                               pcap_datalink_val_to_name(dlt), expected_dlt);
         return 0;
