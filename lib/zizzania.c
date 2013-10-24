@@ -143,7 +143,7 @@ int zz_start(zz_t *zz) {
     dlt = pcap_datalink(zz->handler);
     PRINTF("datalink type %s", pcap_datalink_val_to_name(dlt));
 
-    if (pcap_datalink(zz->handler) != DLT_IEEE802_11_RADIO) {
+    if (dlt != DLT_IEEE802_11_RADIO) {
         const char *expected_dlt;
 
         expected_dlt = pcap_datalink_val_to_name(DLT_IEEE802_11_RADIO);
