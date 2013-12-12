@@ -232,6 +232,15 @@ void zz_finalize(zz_t *zz) {
         pcap_dump_close(zz->dumper);
     }
 
+    if (zz->setup.verbose) {
+        struct pcap_stat stats;
+        if (pcap_stats(zz->handler, &stats) == 0) {
+            PRINTF("recv:   %d", stats.ps_recv);
+            PRINTF("drop:   %d", stats.ps_drop);
+            PRINTF("ifdrop: %d", stats.ps_ifdrop);
+        }
+    }
+
     pcap_close(zz->handler);
     close(zz->comm[0]);
     close(zz->comm[1]);
