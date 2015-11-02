@@ -4,7 +4,7 @@ find_package(PkgConfig)
 
 # common
 add_definitions(-std=gnu99 -Wall -pedantic)
-include_directories(lib/)
+include_directories(./)
 
 # executable
 add_executable(zizzania-bin bin/zizzania.c)

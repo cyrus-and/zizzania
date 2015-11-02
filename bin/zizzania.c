@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include "zizzania.h"
+#include "lib/zizzania.h"
 
 #define DUMP_ERROR_AND_DIE(zz) { \
         fprintf(stderr, "# %s\n", zz.error_buffer); \
