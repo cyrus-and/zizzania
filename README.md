@@ -45,7 +45,7 @@ Examples
         zizzania -i wlan0 -n
 
 * Strip unnecessary packets from a pcap but file excluding the traffic of one
-  articular station and considering an handshake complete after just the first
+  particular station and considering an handshake complete after just the first
   two messages (which should be enough for unicast traffic decryption):
 
         zizzania -r in.pcap -x 00:11:22:33:44:55 -w out.pcap

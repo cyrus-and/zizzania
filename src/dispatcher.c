@@ -84,7 +84,7 @@ int zz_dispatcher_start(zz_handler *zz, pthread_t *thread) {
     assert(pthread_sigmask(SIG_SETMASK, &set, NULL) == 0);
 
     /* start the dispatcher */
-    zz_log("Starting the dipatcher thread");
+    zz_log("Starting the dispatcher thread");
     assert(pthread_create(thread, NULL, dispatcher, zz) == 0);
     return 1;
 }
