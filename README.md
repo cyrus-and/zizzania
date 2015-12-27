@@ -1,122 +1,95 @@
-zizzania - Automatic DeAuth attack
+zizzania - automated DeAuth attack
 ==================================
 
-zizzania deauthenticates the clients of one or more access points until their
-WPA handshakes are not taken, in doing so it tries to minimize multiple
-deauthentications. It can also work passively.
+zizzania sniffs wireless traffic listening for WPA handshakes and dumping only
+those frames suitable to be decrypted (one beacon + EAPOL frames + data). In
+order to speed up the process, zizzania sends IEEE 802.11 DeAuth frames to the
+stations whose handshake is needed, properly handling retransmissions and
+reassociations and trying to limit the number of DeAuth frames sent to each
+station.
 
-The captured traffic can be saved to a pcap file that contains every handshake
-found followed by the actual payload traffic (IEEE 802.11 unicast data frames
-only). The WPA decryption phase is left to tools like Wireshark.
+Usage
+-----
 
-It can even strip unnecessary packets from an existing pcap file captured by a
-wireless interface in RFMON mode.
+    zizzania (-r <file> | -i <device> [-c <channel>]
+              ([-n] | [-d <count>] [-a <count>] [-t <seconds>]))
+             [-b <address>...] [-x <address>...] [-2 | -3]
+             [-w <file> [-g]] [-v]
+
+    -i <device>   Use <device> for both capture and injection
+    -c <channel>  Set <device> to RFMON mode on <channel>
+    -n            Passively wait for WPA handshakes
+    -d <count>    Send groups of <count> deauthentication frames
+    -a <count>    Perform <count> deauthentications before giving up
+    -t <seconds>  Time to wait between two deauthentication attempts
+    -r <file>     Read packets from <file> (- for stdin)
+    -b <address>  Limit the operations to the given BSSID
+    -x <address>  Exclude the given station from the operations
+    -2            Settle for the first two handshake messages
+    -3            Settle for the first three handshake messages
+    -w <file>     Write packets to <file> (- for stdout)
+    -g            Also dump multicast and broadcast traffic
+    -v            Print verbose messages to stderr (toggle with SIGUSR1)
+
+Examples
+--------
+
+* Put the network interface in RFMON mode on channel 6 and save the traffic
+  gathered from the stations of a specific access point:
+
+      zizzania -i wlan0 -c 6 -b aa:bb:cc:dd:ee:ff -w out.pcap
+
+* Passively analyze all the access points and the stations on the current
+  channel assuming that the interface is already RFMON mode:
+
+      zizzania -i wlan0 -n
+
+* Strip unnecessary packets from a pcap but file excluding the traffic of one
+  articular station and considering an handshake complete after just the first
+  two messages (which should be enough for unicast traffic decryption):
+
+      zizzania -r in.pcap -x aa:bb:cc:dd:ee:ff -w out.pcap
 
 Dependencies
 ------------
 
-For Debian-based distros just run:
+* [SCons][scons]
+* [libpcap][libpcap]
+* [uthash][uthash]
 
-    sudo apt-get install cmake libpcap-dev libglib2.0-dev
+### Debian-based
 
-Build and install
------------------
+    sudo apt-get install scons libpcap-dev uthash-dev
 
-    mkdir build
-    cd build
-    cmake ..
+### Mac OS X ([Homebrew](http://brew.sh/))
+
+    brew install scons libpcap clib
+    clib install troydhanson/uthash
+
+Or as an alternative to [clib][clib] just throw [uthash.h][uthash.h] in any
+valid headers search path.
+
+Build
+-----
+
     make
 
-The install process is not mandatory, zizzania can be run from the `build`
+The install process is not mandatory, zizzania can be run from the `src`
 directory. Just in case:
 
     sudo make install
     sudo make uninstall
 
-Sample usage
-------------
+Mac OS X support
+----------------
 
-Run zizzania without arguments to display a brief usage message:
+In order to sniff packets live and to perform the deauthentication phase
+zizzania requires that the chosen interface/driver supports RFMON mode with
+injection capabilities. This is known to be troublesome with Mac OS X and hence
+it is not possible out of the box with zizzania.
 
-    Usage:
-
-        zizzania -i <device> | -r <file>
-                 -b <bssid_1> -b <bssid_2> ... | -a
-                 [-n] [-w <file>]
-
-        -i <device> : use <device> for both capture and injection
-        -r <file>   : read packets from <file> (- for stdin)
-        -b <bssid>  : handshakes of <bssid> clients only
-        -a          : auto discover BSSIDs
-        -n          : passively look for handshakes
-        -w          : dump captured packets to <file> (- for stdout)
-        -v          : print verbose messages
-
-Take a look around:
-
-    sudo zizzania -i wlan0 -n -a
-
-Passively wait for handshakes of a specific AP and dump decryptable traffic to a
-file:
-
-    sudo zizzania -i wlan0 -n -b 11:22:33:44:55:66 -w passive.cap
-
-Force the reconnection of the clients of two specific APs and dump the
-decryptable traffic to a gzipped file:
-
-    sudo zizzania -i wlan0 \
-                  -b 11:22:33:44:55:66 \
-                  -b aa:bb:cc:dd:ee:ff -w - | gzip > active.cap.gz
-
-Extract the decryptable traffic of a specific AP from a gzipped file and dump it
-to a file:
-
-    gunzip < file.cap.gz | zizzania -r - -b 11:22:33:44:55:66 -w crop.cap
-
-Use tshark to parse an encrypted file (SSID: "ssid", password: "password") generated by
-zizzania, looking for HTTP cookies:
-
-    tshark -o wlan.enable_decryption:TRUE \
-           -o 'uat:80211_keys:"wpa-pwd", "password:ssid"' \
-           -2 -r file.cap -R 'http.cookie' \
-           -T fields -e http.host -e http.cookie
-
-Typical output
---------------
-
-The generated output is meant to be easily parsable.
-
-Every time zizzania sniffs a new client it dumps a line in the form:
-
-    N 00:11:22:33:44:55 @ aa:bb:cc:dd:ee:ff
-
-This means that there is some activity from the station with MAC address
-`00:11:22:33:44:55` associated with the AP `aa:bb:cc:dd:ee:ff`.
-
-Instead, each properly recognized handshake produces the following:
-
-    H 00:11:22:33:44:55 @ aa:bb:cc:dd:ee:ff <<<
-
-The `<<<` is there just for visual feedback.
-
-Deauthentication loop
----------------------
-
-When run in active mode (with `-i` and without `-n` options) zizzania
-continuously looks for new clients and once in awhile sends deauthentication
-frames to the clients for which it has not yet captured the handshake.
-
-RFMON mode and injection
-------------------------
-
-zizzania requires that the wireless device is operating in monitor mode (Radio
-Frequency MONitor) in order to sniff the traffic (`-i` option). While in active
-mode (without `-n` option) it also require that the wireless device supports
-packet injection.
-
-A number of management scripts can be found in the [`/tools/`](tools/README.md)
-folder.
-
-Note that not every wireless device is natively capable of switching mode,
-injecting frames and freely switching channels. Sometimes patched drivers might
-be required.
+[scons]: http://www.scons.org/
+[libpcap]: http://www.tcpdump.org/
+[uthash]: https://troydhanson.github.io/uthash/
+[clib]: https://github.com/clibs/clib
+[uthash.h]: https://raw.githubusercontent.com/troydhanson/uthash/master/src/uthash.h

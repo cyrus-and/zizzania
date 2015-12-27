@@ -1,1 +1,7 @@
 /_tmp/
+/deps/
+/test/out/
+*.o
+/src/zizzania
+.sconsign.dblite
+.gdb_history
