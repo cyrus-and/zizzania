@@ -64,7 +64,7 @@ Dependencies
 ### Mac OS X ([Homebrew](http://brew.sh/))
 
     brew install scons libpcap clib
-    clib install troydhanson/uthash
+    clib install troydhanson/uthash  # from this directory
 
 Or as an alternative to [clib][clib] just throw [uthash.h][uthash.h] in any
 valid headers search path.
