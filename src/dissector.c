@@ -49,6 +49,7 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
     int is_eapol;
     zz_bss *bss;
     zz_packet_outcome outcome;
+    const char *extra_info;
 
     /* save the timestamp of the first packet as a reference */
     if (!zz->epoch) {
@@ -224,10 +225,6 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
         }
     }
 
-    if (outcome.new_client) {
-        zz_out("New client %s @ %s", station_str, bssid_str);
-    }
-
     if (outcome.new_client || outcome.track_client) {
         if (zz->setup.is_live) {
             /* (re)start deauthenticating this client */
@@ -235,6 +232,7 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
         }
     }
 
+    extra_info = "";
     if (outcome.track_client) {
         switch (outcome.track_reason) {
         case ZZ_TRACK_REASON_ALIVE:
@@ -242,23 +240,24 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
                    station_str, bssid_str);
             break;
         case ZZ_TRACK_REASON_FIRST_HANDSHAKE:
-            log_ts("%s @ %s - First handshake attempt detected",
-                   station_str, bssid_str);
+            extra_info = " (first attempt detected)";
             break;
         case ZZ_TRACK_REASON_EXPIRATION:
-            log_ts("%s @ %s - Restart due to handshake expiration",
-                   station_str, bssid_str);
+            extra_info = " (causes restart due to expiration)";
             break;
         case ZZ_TRACK_REASON_INVALIDATION:
-            log_ts("%s @ %s - Restart due to handshake invalidation",
-                   station_str, bssid_str);
+            extra_info = " (caused restart due to invalidation)";
             break;
         }
     }
 
     if (outcome.handshake_info) {
-        log_ts("%s @ %s - Handshake message #%d",
-               station_str, bssid_str, outcome.handshake_info);
+        log_ts("%s @ %s - Handshake message #%d%s",
+               station_str, bssid_str, outcome.handshake_info, extra_info);
+    }
+
+    if (outcome.new_client) {
+        zz_out("New client %s @ %s", station_str, bssid_str);
     }
 
     if (outcome.got_handshake) {
