@@ -43,7 +43,7 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
     char destination_str[ZZ_MAC_ADDR_STRING_SIZE];
     char station_str[ZZ_MAC_ADDR_STRING_SIZE];
     zz_mac_addr bssid, source, destination, station;
-    const uint8_t *cursor = packet;
+    const uint8_t *cursor;
     uint32_t safe_size;
     int is_beacon;
     int is_eapol;
@@ -62,6 +62,8 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
         log_ts("Skipping too short packet %u bytes", packet_header->caplen);
         return;
     }
+
+    cursor = packet;
 
     /* get radiotap header */
     radiotap_header = (struct ieee80211_radiotap_header *)cursor;
