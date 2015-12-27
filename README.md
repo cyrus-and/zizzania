@@ -81,8 +81,8 @@ Build
 The install process is not mandatory, zizzania can be run from the `src`
 directory. Just in case:
 
-    sudo make install
-    sudo make uninstall
+    make install
+    make uninstall
 
 Mac OS X support
 ----------------
