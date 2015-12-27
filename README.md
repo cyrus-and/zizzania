@@ -50,6 +50,10 @@ Examples
 
       zizzania -r in.pcap -x aa:bb:cc:dd:ee:ff -w out.pcap
 
+* Use [airdecap-ng][aircrack-ng] to decrypt a pcap file created by zizzania:
+
+      airdecap-ng -b aa:bb:cc:dd:ee:ff -e SSID -p passphrase out.pcap
+
 Dependencies
 ------------
 
@@ -88,6 +92,7 @@ zizzania requires that the chosen interface/driver supports RFMON mode with
 injection capabilities. This is known to be troublesome with Mac OS X and hence
 it is not possible out of the box with zizzania.
 
+[aircrack-ng]: http://www.aircrack-ng.org/
 [scons]: http://www.scons.org/
 [libpcap]: http://www.tcpdump.org/
 [uthash]: https://troydhanson.github.io/uthash/
