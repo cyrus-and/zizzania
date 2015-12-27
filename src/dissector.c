@@ -224,21 +224,26 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
         }
     }
 
-    if (outcome.track_client) {
+    if (outcome.new_client) {
+        zz_out("New client %s @ %s", station_str, bssid_str);
+    }
+
+    if (outcome.new_client || outcome.track_client) {
         if (zz->setup.is_live) {
             /* (re)start deauthenticating this client */
             zz_killer_post_message(&zz->killer, station, bssid, outcome);
         }
+    }
 
+    if (outcome.track_client) {
         switch (outcome.track_reason) {
-        case ZZ_TRACK_REASON_NEW_CLIENT:
-            zz_out("New client %s @ %s", station_str, bssid_str);
-            break;
         case ZZ_TRACK_REASON_ALIVE:
-            log_ts("%s @ %s - Activity detected", station_str, bssid_str);
+            log_ts("%s @ %s - Activity detected again",
+                   station_str, bssid_str);
             break;
         case ZZ_TRACK_REASON_FIRST_HANDSHAKE:
-            log_ts("%s @ %s - First handshake attempt detected", station_str, bssid_str);
+            log_ts("%s @ %s - First handshake attempt detected",
+                   station_str, bssid_str);
             break;
         case ZZ_TRACK_REASON_EXPIRATION:
             log_ts("%s @ %s - Restart due to handshake expiration",

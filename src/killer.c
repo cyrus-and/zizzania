@@ -138,7 +138,7 @@ int zz_killer_run(zz_handler *zz, zz_killer *killer) {
         target.bssid = message.bssid;
 
         /* update the target information */
-        if (message.outcome.track_client) {
+        if (message.outcome.new_client || message.outcome.track_client) {
             /* schedule a deauthentication now */
             target.schedule = time(NULL);
 

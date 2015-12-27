@@ -10,7 +10,6 @@ enum {
 };
 
 enum {
-    ZZ_TRACK_REASON_NEW_CLIENT,
     ZZ_TRACK_REASON_ALIVE,
     ZZ_TRACK_REASON_FIRST_HANDSHAKE,
     ZZ_TRACK_REASON_EXPIRATION,
@@ -18,10 +17,11 @@ enum {
 };
 
 typedef struct {
+    unsigned new_client:1;
     unsigned ignore:1;
     unsigned ignore_reason:2;
     unsigned track_client:1;
-    unsigned track_reason:3;
+    unsigned track_reason:2;
     unsigned grace_time:1;
     unsigned dump_packet:1;
     unsigned got_handshake:1;

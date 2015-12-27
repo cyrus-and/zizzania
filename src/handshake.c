@@ -19,8 +19,7 @@ zz_packet_outcome zz_process_packet(zz_handler *zz,
     /* create or fetch the client descriptor */
     if (zz_clients_lookup(&zz->clients, station, bssid, &client)) {
         /* surely attempt to track the client if new */
-        outcome.track_client = 1;
-        outcome.track_reason = ZZ_TRACK_REASON_NEW_CLIENT;
+        outcome.new_client = 1;
     }
 
     /* keep track of the last seen data packet */
