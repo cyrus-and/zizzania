@@ -70,10 +70,13 @@ void zz_print_stats(zz_handler *zz) {
         zz_out("  - Handshakes ..... %ld", bss->n_handshakes);
         zz_out("  - Stations ....... %u", zz_members_count(&bss->stations));
         zz_out("  - Data packets ... %ld", bss->n_data_packets);
-        if (zz->dumper && bss->n_handshakes > 0) {
+        if (bss->n_handshakes > 0 && (!zz->setup.is_live || zz->setup.output)) {
+            const char *file;
+
+            file = (zz->setup.output ? zz->setup.output : zz->setup.input);
+            file = (strcmp(file, "-") == 0 ? "?" : file);
             zz_out("  Decrypt with airdecap-ng -e '%s' -b %s -p 'xxx' '%s'",
-                   bss->ssid, bssid_str,
-                   strcmp(zz->setup.output, "-") == 0 ? "?" : zz->setup.output);
+                   bss->ssid, bssid_str, file);
         }
     }
 
