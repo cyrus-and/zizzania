@@ -168,9 +168,13 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
     if (destination == ZZ_MAC_ADDR_BCAST ||
         destination & ZZ_MAC_ADDR_MCAST_MASK) {
 
-        /* for "handshaked" networks only, if requested */
-        if (zz->dumper && zz->setup.dump_group_traffic && bss->n_handshakes > 0) {
-            pcap_dump((u_char *)zz->dumper, packet_header, packet);
+        /* for "handshaked" networks only, if explicitly requested */
+        if (zz->setup.dump_group_traffic && bss->n_handshakes > 0) {
+            bss->n_data_packets++;
+
+            if (zz->dumper) {
+                pcap_dump((u_char *)zz->dumper, packet_header, packet);
+            }
         }
 
         return; /* anyway the processing stops here */
