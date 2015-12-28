@@ -75,7 +75,7 @@ void zz_print_stats(zz_handler *zz) {
 
             file = (zz->setup.output ? zz->setup.output : zz->setup.input);
             file = (strcmp(file, "-") == 0 ? "?" : file);
-            zz_out("  Decrypt with airdecap-ng -e '%s' -b %s -p 'xxx' '%s'",
+            zz_out("  Decrypt with airdecap-ng -e '%s' -b %s -p '?' '%s'",
                    bss->ssid, bssid_str, file);
         }
     }
