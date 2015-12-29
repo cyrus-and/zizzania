@@ -12,7 +12,7 @@ void zz_print_usage() {
             LN("Usage:")
             LN("")
             LN("    zizzania (-r <file> | -i <device> [-c <channel>]")
-            LN("              ([-n] | [-d <count>] [-a <count>] [-t <seconds>]))")
+            LN("              (-n | [-d <count>] [-a <count>] [-t <seconds>]))")
             LN("             [-b <address>...] [-x <address>...] [-2 | -3]")
             LN("             [-w <file> [-g]] [-v]")
             LN("")
