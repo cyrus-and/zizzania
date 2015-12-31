@@ -37,18 +37,18 @@ Examples
 --------
 
 * Put the network interface in RFMON mode on channel 6 and save the traffic
-  gathered from the stations of a specific access point:
+gathered from the stations of a specific access point:
 
         zizzania -i wlan0 -c 6 -b AA:BB:CC:DD:EE:FF -w out.pcap
 
 * Passively analyze all the access points and the stations on the current
-  channel assuming that the interface is already RFMON mode:
+channel assuming that the interface is already RFMON mode:
 
         zizzania -i wlan0 -n
 
 * Strip unnecessary packets from a pcap but file excluding the traffic of one
-  particular station and considering an handshake complete after just the first
-  two messages (which should be enough for unicast traffic decryption):
+particular station and considering an handshake complete after just the first
+two messages (which should be enough for unicast traffic decryption):
 
         zizzania -r in.pcap -x 00:11:22:33:44:55 -w out.pcap
 
