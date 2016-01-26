@@ -1,12 +1,13 @@
 #include <stdio.h>
 
 #include "handler.h"
+#include "release.h"
 #include "terminal.h"
 
 void zz_print_usage() {
     #define LN(x) x "\n"
     fprintf(stderr,
-            LN("zizzania - automated DeAuth attack")
+            LN("zizzania v" ZZ_VERSION " - Automated DeAuth attack")
             LN("Copyright (c) 2016 Andrea Cardaci <cyrus.and@gmail.com>")
             LN("")
             LN("Usage:")
