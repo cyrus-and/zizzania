@@ -73,8 +73,15 @@ Dependencies
     brew install scons libpcap clib
     clib install troydhanson/uthash  # from this directory
 
-Or as an alternative to [clib][clib] just throw [uthash.h][uthash.h] in any
-valid headers search path.
+### Manual installation
+
+Install [SCons][scons] and [libpcap][libpcap] as described on their website.
+Put [uthash.h][uthash.h] in any valid headers search path, or alternatively:
+
+    mkdir -p deps/uthash/
+    pushd deps/uthash/
+    wget https://raw.githubusercontent.com/troydhanson/uthash/master/src/uthash.h
+    popd
 
 Build
 -----
