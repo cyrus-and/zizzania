@@ -7,8 +7,8 @@
 
 #define ZZ_MAC_ADDR_STRING_SIZE 18
 
-#define ZZ_MAC_ADDR_BCAST      0xffffffffffffUL
-#define ZZ_MAC_ADDR_MCAST_MASK (1UL << 40)
+#define ZZ_MAC_ADDR_BCAST      0xffffffffffffULL
+#define ZZ_MAC_ADDR_MCAST_MASK (1ULL << 40)
 
 #define ZZ_FCF_BEACON           0x80
 #define ZZ_FCF_DATA             0x08
