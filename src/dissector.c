@@ -153,7 +153,7 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
                      &ssid, &ssid_length);
             memcpy(bss->ssid, ssid, ssid_length);
             bss->has_beacon = 1;
-            zz_out("SSID discovered '%s' (%s)", bss->ssid, bssid_str);
+            zz_out("BSS discovered '%s' (%s)", bss->ssid, bssid_str);
         }
 
         /* anyway beacon processing stops here */
