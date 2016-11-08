@@ -67,7 +67,7 @@ void zz_print_stats(zz_handler *zz) {
         // XXX strings not shell-escaped
         zz_mac_addr_sprint(bssid_str, bss->bssid);
         zz_out("");
-        zz_out("SSID '%s' (%s)", bss->ssid, bssid_str);
+        zz_out("SSID '%.*s' (%s)", bss->ssid_length, bss->ssid, bssid_str);
         zz_out("  - Handshakes ..... %ld", bss->n_handshakes);
         zz_out("  - Stations ....... %u", zz_members_count(&bss->stations));
         zz_out("  - Data packets ... %ld", bss->n_data_packets);
@@ -76,8 +76,8 @@ void zz_print_stats(zz_handler *zz) {
 
             file = (zz->setup.output ? zz->setup.output : zz->setup.input);
             file = (strcmp(file, "-") == 0 ? "?" : file);
-            zz_out("  Decrypt with airdecap-ng -e '%s' -b %s -p '?' '%s'",
-                   bss->ssid, bssid_str, file);
+            zz_out("  Decrypt with airdecap-ng -e '%.*s' -b %s -p '?' '%s'",
+                   bss->ssid_length, bss->ssid, bssid_str, file);
         }
     }
 
