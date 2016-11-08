@@ -64,7 +64,7 @@ void zz_print_stats(zz_handler *zz) {
         }
         n_allowed_ssid++;
 
-        // XXX strings not escaped
+        // XXX strings not shell-escaped
         zz_mac_addr_sprint(bssid_str, bss->bssid);
         zz_out("");
         zz_out("SSID '%s' (%s)", bss->ssid, bssid_str);
