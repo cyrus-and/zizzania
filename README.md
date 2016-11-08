@@ -25,7 +25,7 @@ Usage
     -a <count>    Perform <count> deauthentications before giving up
     -t <seconds>  Time to wait between two deauthentication attempts
     -r <file>     Read packets from <file> (- for stdin)
-    -b <address>  Limit the operations to the given BSSID
+    -b <address>  Limit the operations to the given BSS
     -x <address>  Exclude the given station from the operations
     -2            Settle for the first two handshake messages
     -3            Settle for the first three handshake messages

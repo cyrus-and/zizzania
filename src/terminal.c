@@ -24,7 +24,7 @@ void zz_print_usage() {
             LN("    -a <count>    Perform <count> deauthentications before giving up")
             LN("    -t <seconds>  Time to wait between two deauthentication attempts")
             LN("    -r <file>     Read packets from <file> (- for stdin)")
-            LN("    -b <address>  Limit the operations to the given BSSID")
+            LN("    -b <address>  Limit the operations to the given BSS")
             LN("    -x <address>  Exclude the given station from the operations")
             LN("    -2            Settle for the first two handshake messages")
             LN("    -3            Settle for the first three handshake messages")
@@ -83,7 +83,7 @@ void zz_print_stats(zz_handler *zz) {
 
     if (n_allowed_ssid == 0) {
         zz_out("");
-        zz_out("No SSID found");
+        zz_out("No BSS found");
         return;
     }
 }
