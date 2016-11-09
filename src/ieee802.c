@@ -115,3 +115,29 @@ int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer) {
     *addr = zz_mac_addr_from_array(octets);
     return 1;
 }
+
+void zz_ssid_escape_sprint(char *buffer, int *is_escaped,
+                           const char *ssid, int ssid_length) {
+    int i;
+    char *ptr;
+
+    /* check/escape */
+    ptr = buffer;
+    *is_escaped = 0;
+    for (i = 0; i < ssid_length; i++) {
+        char c;
+
+        /* hex-escape non "graph" character including the escape character */
+        c = ssid[i];
+        if (isgraph(c) && c != '\\' && c != '\'') {
+            *ptr++ = c;
+        } else {
+            sprintf(ptr, "\\x%02x", c);
+            ptr += 4;
+            *is_escaped = 1;
+        }
+    }
+
+    /* string terminator */
+    *ptr = '\0';
+}
