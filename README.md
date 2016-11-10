@@ -8,7 +8,7 @@ stations whose handshake is needed, properly handling retransmissions and
 reassociations and trying to limit the number of DeAuth frames sent to each
 station.
 
-![Screenshot](http://i.imgur.com/QjhTGps.png)
+![Screenshot](http://i.imgur.com/NG7CyU0.png)
 
 Usage
 -----
