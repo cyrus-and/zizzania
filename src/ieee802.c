@@ -129,7 +129,7 @@ void zz_ssid_escape_sprint(char *buffer, int *is_escaped,
 
         /* hex-escape non "graph" character including the escape character */
         c = ssid[i];
-        if (isgraph(c) && c != '\\' && c != '\'') {
+        if ((isgraph(c) || c == ' ') && c != '\\' && c != '\'') {
             *ptr++ = c;
         } else {
             sprintf(ptr, "\\x%02x", c);
