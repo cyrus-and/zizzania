@@ -60,32 +60,23 @@ decryption):
 Dependencies
 ------------
 
-* [SCons][scons]
+* [CMake][cmake]
 * [libpcap][libpcap]
-* [uthash][uthash]
 
 ### Debian-based
 
-    sudo apt-get install scons libpcap-dev uthash-dev
+    sudo apt-get install libpcap-dev
 
 ### Mac OS X ([Homebrew](http://brew.sh/))
 
-    brew install scons libpcap clib
-    clib install troydhanson/uthash  # from this directory
-
-### Manual installation
-
-Install [SCons][scons] and [libpcap][libpcap] as described on their website.
-Put [uthash.h][uthash.h] in any valid headers search path, or alternatively:
-
-    mkdir -p deps/uthash/
-    pushd deps/uthash/
-    wget https://raw.githubusercontent.com/troydhanson/uthash/master/src/uthash.h
-    popd
+    brew install libpcap
 
 Build
 -----
 
+    mkdir build
+    cd build
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     make
 
 The install process is not mandatory, zizzania can be run from the `src`
@@ -103,8 +94,5 @@ injection. This is known to be troublesome with Mac OS X and hence it is not
 directly supported by zizzania.
 
 [aircrack-ng]: http://www.aircrack-ng.org
-[scons]: http://www.scons.org
+[cmake]: https://cmake.org/
 [libpcap]: http://www.tcpdump.org
-[uthash]: https://troydhanson.github.io/uthash
-[clib]: https://github.com/clibs/clib
-[uthash.h]: https://raw.githubusercontent.com/troydhanson/uthash/master/src/uthash.h

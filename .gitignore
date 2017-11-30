@@ -1,6 +1,3 @@
 /_tmp/
-/deps/
 *.o
-/src/zizzania
-.sconsign.dblite
 .gdb_history

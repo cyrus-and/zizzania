@@ -1,8 +1,0 @@
-# vim: filetype=python
-env = Environment()
-env.Append(CFLAGS='-std=gnu99 -Wall')
-env.Append(CFLAGS='-I ../deps/uthash')
-env.Append(CFLAGS='-g3 -DDEBUG' if ARGUMENTS.get('debug', 0) else '-O3 -Os')
-env.Append(LIBS=['pthread'])
-env.Append(LIBS=['pcap'])
-env.Program(target='zizzania', source=Glob('*.c'))
