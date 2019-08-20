@@ -90,7 +90,7 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
             members = (opt == 'b' ?
                        &zz->setup.allowed_bssids :
                        &zz->setup.banned_stations);
-            zz_members_add(members, mac_addr);
+            zz_members_put(members, mac_addr);
             break;
 
         case 'w':

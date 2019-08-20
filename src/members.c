@@ -14,7 +14,7 @@ void zz_members_new(zz_members *members) {
     *members = NULL;
 }
 
-int zz_members_add(zz_members *members, zz_mac_addr mac_addr) {
+int zz_members_put(zz_members *members, zz_mac_addr mac_addr) {
     struct zz_device *device;
 
     HASH_FIND(hh, *members, &mac_addr, sizeof(zz_mac_addr), device);
@@ -29,7 +29,7 @@ int zz_members_add(zz_members *members, zz_mac_addr mac_addr) {
     return 1;
 }
 
-int zz_members_get(const zz_members *members, zz_mac_addr mac_addr) {
+int zz_members_has(const zz_members *members, zz_mac_addr mac_addr) {
     struct zz_device *device;
 
     HASH_FIND(hh, *members, &mac_addr, sizeof(zz_mac_addr), device);
