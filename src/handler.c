@@ -180,7 +180,7 @@ static int packet_loop(zz_handler *zz) {
 int zz_initialize(zz_handler *zz) {
     memset(zz, 0, sizeof(zz_handler));
     zz_members_new(&zz->setup.allowed_bssids);
-    zz_members_new(&zz->setup.allowed_bssids);
+    zz_members_new(&zz->setup.banned_stations);
     zz_bsss_new(&zz->bsss);
     zz_clients_new(&zz->clients);
 
