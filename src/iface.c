@@ -4,7 +4,7 @@
 
 #include "handler.h"
 
-int zz_set_monitor(zz_handler *zz) {
+int zz_set_channel(zz_handler *zz) {
     errno = ENOTSUP;
     return 0;
 }
@@ -25,27 +25,6 @@ int zz_set_monitor(zz_handler *zz) {
 
 #include "handler.h"
 
-#define IFREQ_FLAGS_DOWN 0
-#define IFREQ_FLAGS_UP IFF_UP | IFF_BROADCAST | IFF_RUNNING
-
-static int ifreq_flags(int fd, const char *iface, short flags) {
-    struct ifreq ifreq;
-
-    memset(&ifreq, 0, sizeof(struct ifreq));
-    strncpy(ifreq.ifr_name,iface, IFNAMSIZ);
-    ifreq.ifr_flags = flags;
-    return ioctl(fd, SIOCSIFFLAGS, &ifreq) == 0;
-}
-
-static int iwreq_mode(int fd, const char *iface, __u32 mode) {
-    struct iwreq iwreq;
-
-    memset(&iwreq, 0, sizeof(struct iwreq));
-    strncpy(iwreq.ifr_name, iface, IFNAMSIZ);
-    iwreq.u.mode = mode;
-    return (ioctl(fd, SIOCSIWMODE, &iwreq) == 0);
-}
-
 static int iwreq_freq(int fd, const char *iface, int channel) {
     struct iwreq iwreq;
 
@@ -56,7 +35,7 @@ static int iwreq_freq(int fd, const char *iface, int channel) {
     return (ioctl(fd, SIOCSIWFREQ, &iwreq) == 0);
 }
 
-int zz_set_monitor(zz_handler *zz) {
+int zz_set_channel(zz_handler *zz) {
     int fd;
 
     assert(zz->setup.is_live);
@@ -67,10 +46,7 @@ int zz_set_monitor(zz_handler *zz) {
         return 0;
     }
 
-    return (ifreq_flags(fd, zz->setup.input, IFREQ_FLAGS_DOWN) &&
-            iwreq_mode(fd, zz->setup.input, IW_MODE_MONITOR) &&
-            ifreq_flags(fd, zz->setup.input, IFREQ_FLAGS_UP) &&
-            iwreq_freq(fd, zz->setup.input, zz->setup.channel));
+    return iwreq_freq(fd, zz->setup.input, zz->setup.channel);
 }
 
 #endif

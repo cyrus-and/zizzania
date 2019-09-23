@@ -71,7 +71,13 @@ make uninstall
 
 ## Mac OS X support
 
-In order to sniff packets live and to perform the deauthentication phase zizzania requires that the network interface/driver supports RFMON mode and injection. This is known to be troublesome with Mac OS X and hence it is not directly supported by zizzania.
+Channel switching must be perfomed manually:
+
+```
+ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
+sudo airport --disassociate
+sudo airport --channel=<channel>
+```
 
 [Homebrew]: https://brew.sh/
 [aircrack-ng]: https://www.aircrack-ng.org
