@@ -127,14 +127,14 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
     }
 
     /* skip unwanted access points */
-    #ifdef DEBUG
     if (!bss->is_allowed) {
+        #ifdef DEBUG
         if (!is_beacon) {
             log_ts("%s @ %s - Skipping unwanted BSS traffic", station_str, bssid_str);
         }
+        #endif
         return;
     }
-    #endif
 
     /* save a beacon (just once per bss) */
     if (is_beacon) {
