@@ -16,7 +16,7 @@
 #include "util.h"
 
 /* use smaller snaplen if not saving traffic */
-#define MIN_SNAPLEN 128
+#define MIN_SNAPLEN 256
 #define MAX_SNAPLEN 65535
 
 #define BPF "wlan[0] == " ZZ_STRING(ZZ_FCF_DATA) \
