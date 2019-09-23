@@ -14,7 +14,7 @@ void zz_print_usage() {
             LN("")
             LN("    zizzania (-r <file> | -i <device> [-c <channel>]")
             LN("              (-n | [-d <count>] [-a <count>] [-t <seconds>]))")
-            LN("             [-b <address>...] [-x <address>...] [-2 | -3]")
+            LN("             [-b <match>...] [-x <match>...] [-2 | -3]")
             LN("             [-w <file> [-g]] [-v]")
             LN("")
             LN("    -i <device>   Use <device> for both capture and injection")
@@ -24,8 +24,8 @@ void zz_print_usage() {
             LN("    -a <count>    Perform <count> deauthentications before giving up")
             LN("    -t <seconds>  Time to wait between two deauthentication attempts")
             LN("    -r <file>     Read packets from <file> (- for stdin)")
-            LN("    -b <address>  Limit the operations to the given BSS")
-            LN("    -x <address>  Exclude the given station from the operations")
+            LN("    -b <match>    Limit the operations to the given BSSIDs (<address>[/<mask>])")
+            LN("    -x <match>    Exclude the given stations from the operations (<address>[/<mask>])")
             LN("    -2            Settle for the first two handshake messages")
             LN("    -3            Settle for the first three handshake messages")
             LN("    -w <file>     Write packets to <file> (- for stdout)")
@@ -34,7 +34,7 @@ void zz_print_usage() {
             LN("")
             LN("Example:")
             LN("")
-            LN("    zizzania -i wlan0 -c 1 -w out.pcap")
+            LN("    zizzania -i wlan0 -c 1 -b ac:1d:1f:1e:dd:ad/ff:ff:ff:00:00:00 -w out.pcap")
             LN(""));
     #undef LN
 }

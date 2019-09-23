@@ -121,9 +121,9 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
 
     /* lookup or create a descriptor for this bss */
     if (zz_bsss_lookup(&zz->bsss, bssid, &bss)) {
-        /* check if this bssid is filtered out just once */
+        /* allowed if no constraints are specified or explicitly added */
         bss->is_allowed = (zz_members_is_empty(&zz->setup.allowed_bssids) ||
-                           zz_members_has(&zz->setup.allowed_bssids, bssid));
+                           zz_members_match(&zz->setup.allowed_bssids, bssid));
     }
 
     /* skip unwanted access points */
@@ -168,7 +168,7 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
     }
 
     /* skip blacklisted stations */
-    if (zz_members_has(&zz->setup.banned_stations, station)) {
+    if (zz_members_match(&zz->setup.banned_stations, station)) {
         log_ts("%s @ %s - Skipping banned station", station_str, bssid_str);
         return;
     }

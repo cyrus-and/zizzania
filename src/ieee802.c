@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "ieee802.h"
 
@@ -78,7 +79,7 @@ void zz_mac_addr_sprint(char *buffer, zz_mac_addr addr) {
     buffer[17] = '\0';
 }
 
-int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer) {
+int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer, const char *terminators) {
     const char *ptr;
     int i;
     uint8_t octets[6] = {0};
@@ -99,11 +100,11 @@ int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer) {
             break;
 
         case 2:
-            /* check proper terminator */
+            /* check proper terminator (apart from '\0') */
             octets[i++] = strtol(ptr - 2, &chk, 16);
             if (chk != ptr ||
-                (i < 6 && *ptr != ':' && *ptr != '-') ||
-                (i == 6 && *ptr != '\0')) {
+                (i < 6 && !strchr(":-", *ptr)) ||
+                (i == 6 && !strchr(terminators, *ptr))) {
                 return 0;
             }
             break;

@@ -110,7 +110,7 @@ zz_mac_addr zz_mac_addr_from_array(const uint8_t *array);
 void zz_mac_addr_to_array(uint8_t *octets, zz_mac_addr addr);
 
 void zz_mac_addr_sprint(char *buffer, zz_mac_addr addr);
-int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer);
+int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer, const char *terminators);
 
 /* at least ZZ_BEACON_MAX_SSID_ESCAPE_LENGTH + 1 for '\0' */
 void zz_ssid_escape_sprint(char *buffer, int *is_escaped,

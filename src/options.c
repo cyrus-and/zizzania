@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "handler.h"
@@ -33,6 +34,8 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
     int killer_max_attempts = 0;
     int killer_interval = 0;
     zz_mac_addr mac_addr;
+    zz_mac_addr mac_mask;
+    char *mask_ptr;
     zz_members *members;
 
     opterr = 0;
@@ -83,14 +86,22 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
 
         case 'b':
         case 'x':
-            if (!zz_mac_addr_sscan(&mac_addr, optarg)) {
+            if (!zz_mac_addr_sscan(&mac_addr, optarg, "/")) {
                 zz_error(zz, "Invalid MAC address '%s'", optarg);
                 return 0;
+            }
+            if (mask_ptr = strchr(optarg, '/'), mask_ptr) {
+                if (!zz_mac_addr_sscan(&mac_mask, mask_ptr + 1, "")) {
+                    zz_error(zz, "Invalid MAC address mask '%s'", mask_ptr + 1);
+                    return 0;
+                }
+            } else {
+                mac_mask = -1;  /* 0xff... */
             }
             members = (opt == 'b' ?
                        &zz->setup.allowed_bssids :
                        &zz->setup.banned_stations);
-            zz_members_put(members, mac_addr);
+            zz_members_put_mask(members, mac_addr, mac_mask);
             break;
 
         case 'w':
