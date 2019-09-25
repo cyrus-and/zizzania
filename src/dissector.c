@@ -140,9 +140,8 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
     if (is_beacon) {
         if (!bss->has_beacon) {
             int ssid_length;
-            const char *ssid;
-            char escaped_ssid[ZZ_BEACON_MAX_SSID_ESCAPE_LENGTH + 1] = {0};
             int is_escaped;
+            const char *ssid;
 
             /* dump the packet if requested */
             if (zz->dumper) {
@@ -154,13 +153,12 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
                      packet_header->caplen - (cursor - packet),
                      &ssid, &ssid_length);
             memcpy(bss->ssid, ssid, ssid_length);
-            bss->ssid_length = ssid_length;
             bss->has_beacon = 1;
 
             /* notify the user */
-            zz_ssid_escape_sprint(escaped_ssid, &is_escaped, ssid, ssid_length);
-            zz_out("BSS discovered %s'%s' (%s)",
-                   is_escaped ? "$": "", escaped_ssid, bssid_str);
+            zz_ssid_escape_sprint(bss->ssid, &is_escaped, ssid, ssid_length);
+            bss->is_ssid_escaped = is_escaped;
+            zz_out("BSS discovered %s'%s' (%s)", is_escaped ? "$": "", bss->ssid, bssid_str);
         }
 
         /* anyway beacon processing stops here */
