@@ -23,7 +23,7 @@
 #define ZZ_BEACON_SSID_PARAM_TYPE    0x00
 #define ZZ_BEACON_MAX_SSID_LENGTH    0xff /* spec says 32 */
 /* each character could possibly be escaped as \xHH */
-#define ZZ_BEACON_MAX_SSID_ESCAPE_LENGTH  ZZ_BEACON_MAX_SSID_LENGTH * 4
+#define ZZ_BEACON_MAX_SSID_ESCAPED_LENGTH  ZZ_BEACON_MAX_SSID_LENGTH * 4
 
 #define ZZ_EAPOL_ETHERTYPE 0x888e /* network byte order */
 
