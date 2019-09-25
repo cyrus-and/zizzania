@@ -117,14 +117,12 @@ int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer, const char *termina
     return 1;
 }
 
-void zz_ssid_escape_sprint(char *buffer, int *is_escaped,
-                           const char *ssid, int ssid_length) {
+void zz_ssid_escape_sprint(char *buffer, const char *ssid, int ssid_length) {
     int i;
     char *ptr;
 
     /* check/escape */
     ptr = buffer;
-    *is_escaped = 0;
     for (i = 0; i < ssid_length; i++) {
         char c;
 
@@ -135,7 +133,6 @@ void zz_ssid_escape_sprint(char *buffer, int *is_escaped,
         } else {
             sprintf(ptr, "\\x%02x", c);
             ptr += 4;
-            *is_escaped = 1;
         }
     }
 

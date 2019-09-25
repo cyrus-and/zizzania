@@ -11,7 +11,6 @@ typedef struct {
     zz_mac_addr bssid;
     unsigned is_allowed:1;
     unsigned has_beacon:1;
-    unsigned is_ssid_escaped:1;
     char ssid[ZZ_BEACON_MAX_SSID_ESCAPE_LENGTH + 1];
     zz_members stations; /* at least one handshake */
     long n_handshakes;

@@ -113,7 +113,6 @@ void zz_mac_addr_sprint(char *buffer, zz_mac_addr addr);
 int zz_mac_addr_sscan(zz_mac_addr *addr, const char *buffer, const char *terminators);
 
 /* at least ZZ_BEACON_MAX_SSID_ESCAPE_LENGTH + 1 for '\0' */
-void zz_ssid_escape_sprint(char *buffer, int *is_escaped,
-                           const char *ssid, int ssid_length);
+void zz_ssid_escape_sprint(char *buffer, const char *ssid, int ssid_length);
 
 #endif
