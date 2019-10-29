@@ -47,7 +47,7 @@ airdecap-ng -b AA:BB:CC:DD:EE:FF -e SSID -p passphrase out.pcap
 sudo apt-get install libpcap-dev
 ```
 
-### Mac OS X ([Homebrew][])
+### macOS ([Homebrew][])
 
 ```
 brew install libpcap
@@ -69,7 +69,7 @@ make install
 make uninstall
 ```
 
-## Mac OS X support
+## macOS support
 
 Channel switching must be perfomed manually:
 
