@@ -1,3 +1,7 @@
 /_tmp/
-*.o
+/external/
+/Makefile
+/src/zizzania
 .gdb_history
+*.o
+*.d

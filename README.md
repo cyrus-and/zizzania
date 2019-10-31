@@ -38,7 +38,6 @@ airdecap-ng -b AA:BB:CC:DD:EE:FF -e SSID -p passphrase out.pcap
 
 ## Dependencies
 
-- [CMake][]
 - [libpcap][]
 
 ### Debian-based
@@ -56,9 +55,7 @@ brew install libpcap
 ## Build
 
 ```
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
+make -f config.Makefile
 make
 ```
 
@@ -79,7 +76,6 @@ sudo airport --disassociate
 sudo airport --channel=<channel>
 ```
 
-[Homebrew]: https://brew.sh/
 [aircrack-ng]: https://www.aircrack-ng.org
-[CMake]: https://cmake.org/
 [libpcap]: https://www.tcpdump.org/
+[Homebrew]: https://brew.sh/
