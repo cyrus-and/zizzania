@@ -2,7 +2,7 @@
 
 zizzania sniffs wireless traffic listening for WPA handshakes and dumping only those frames suitable to be decrypted (one beacon + EAPOL frames + data). In order to speed up the process, zizzania sends IEEE 802.11 DeAuth frames to the stations whose handshake is needed, properly handling retransmissions and reassociations and trying to limit the number of DeAuth frames sent to each station.
 
-![Screenshot](http://i.imgur.com/NG7CyU0.png)
+![Screenshot](https://i.imgur.com/zGxPSTE.png)
 
 ## Examples
 
