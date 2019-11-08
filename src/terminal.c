@@ -76,12 +76,15 @@ void zz_print_stats(zz_handler *zz) {
         if (bss->n_handshakes > 0 && (!zz->setup.is_live || zz->setup.output)) {
             const char *file;
 
-            /* XXX file not shell-escaped */
-
-            /* print hint */
+            /* format file name (XXX file not shell-escaped) */
             file = (zz->setup.output ? zz->setup.output : zz->setup.input);
-            file = (strcmp(file, "-") == 0 ? "?" : file);
-            zz_out("  Decrypt with airdecap-ng -e $'%s' -b %s -p '?' '%s'",
+            file = (strcmp(file, "-") == 0 ? "CAPTURE" : file);
+
+            /* print cracking hint */
+            zz_out("  - Crack with ..... aircrack-ng -w 'WORDLIST' -b %s '%s'", bssid_str, file);
+
+            /* print decryption hint */
+            zz_out("  - Decrypt with ... airdecap-ng -e $'%s' -b %s -p 'PASSPHRASE' '%s'",
                    bss->ssid, bssid_str, file);
         }
     }
