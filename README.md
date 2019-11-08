@@ -6,10 +6,10 @@ zizzania sniffs wireless traffic listening for WPA handshakes and dumping only t
 
 ## Examples
 
-Put the network interface in RFMON mode on channel 6 and save the traffic gathered from the stations associated to a specific access point:
+Put the network interface in RFMON mode on channel 6 and save the traffic gathered from the stations associated to a specific access point excluding those whose MAC address starts with `00:11:22`:
 
 ```
-zizzania -i wlan0 -c 6 -b AA:BB:CC:DD:EE:FF -w out.pcap
+zizzania -i wlan0 -c 6 -b AA:BB:CC:DD:EE:FF -x 00:11:22:33:44:55/ff:ff:ff:00:00:00 -w out.pcap
 ```
 
 ---
@@ -28,38 +28,32 @@ Strip unnecessary frames from a pcap file (excluding altogether the traffic gene
 zizzania -r in.pcap -x 00:11:22:33:44:55 -w out.pcap
 ```
 
----
+## Setup
 
-Use [airdecap-ng][] to decrypt a pcap file created by zizzania:
+### Dependencies
 
-```
-airdecap-ng -b AA:BB:CC:DD:EE:FF -e SSID -p passphrase out.pcap
-```
-
-## Dependencies
-
-- [libpcap][]
-
-### Debian-based
+For Debian-based systems:
 
 ```
 sudo apt-get install libpcap-dev
 ```
 
-### macOS ([Homebrew][])
+For macOS systems (Homebrew):
 
 ```
 brew install libpcap
 ```
 
-## Build
+### Building
 
 ```
 make -f config.Makefile
 make
 ```
 
-The install process is not mandatory, zizzania can be run from the `src` directory. Just in case:
+### Installation
+
+The installation process is not mandatory, zizzania can be run from the `src` directory. Just in case:
 
 ```
 make install
@@ -68,14 +62,10 @@ make uninstall
 
 ## macOS support
 
-Channel switching must be perfomed manually:
+Channel switching must be performed manually:
 
 ```
 ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
 sudo airport --disassociate
 sudo airport --channel=<channel>
 ```
-
-[aircrack-ng]: https://www.aircrack-ng.org
-[libpcap]: https://www.tcpdump.org/
-[Homebrew]: https://brew.sh/
