@@ -41,7 +41,7 @@ sudo apt-get install libpcap-dev
 For macOS systems (Homebrew):
 
 ```
-brew install libpcap
+brew install libpcap wget
 ```
 
 ### Building
