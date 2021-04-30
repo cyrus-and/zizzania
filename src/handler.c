@@ -187,8 +187,10 @@ static int packet_loop(zz_handler *zz) {
 
 int zz_initialize(zz_handler *zz) {
     memset(zz, 0, sizeof(zz_handler));
-    zz_members_new(&zz->setup.allowed_bssids);
-    zz_members_new(&zz->setup.banned_stations);
+    zz_members_new(&zz->setup.included_bssids);
+    zz_members_new(&zz->setup.excluded_bssids);
+    zz_members_new(&zz->setup.included_stations);
+    zz_members_new(&zz->setup.excluded_stations);
     zz_bsss_new(&zz->bsss);
     zz_clients_new(&zz->clients);
 
@@ -228,8 +230,10 @@ int zz_finalize(zz_handler *zz) {
         pcap_dump_close(zz->dumper);
     }
 
-    zz_members_free(&zz->setup.allowed_bssids);
-    zz_members_free(&zz->setup.banned_stations);
+    zz_members_free(&zz->setup.included_bssids);
+    zz_members_free(&zz->setup.excluded_bssids);
+    zz_members_free(&zz->setup.included_stations);
+    zz_members_free(&zz->setup.excluded_stations);
     zz_bsss_free(&zz->bsss);
     zz_clients_free(&zz->clients);
 

@@ -39,7 +39,7 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
     zz_members *members;
 
     opterr = 0;
-    while (opt = getopt(argc, argv, ":i:c:nd:a:t:r:b:x:w:23gv"), opt != -1) {
+    while (opt = getopt(argc, argv, ":i:c:nd:a:t:r:b:B:s:S:x:w:23gv"), opt != -1) {
         switch (opt) {
 
         case 'i':
@@ -85,7 +85,9 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
             break;
 
         case 'b':
-        case 'x':
+        case 'B':
+        case 's':
+        case 'S':
             if (!zz_mac_addr_sscan(&mac_addr, optarg, "/")) {
                 zz_error(zz, "Invalid MAC address '%s'", optarg);
                 return 0;
@@ -98,10 +100,25 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
             } else {
                 mac_mask = -1;  /* 0xff... */
             }
-            members = (opt == 'b' ?
-                       &zz->setup.allowed_bssids :
-                       &zz->setup.banned_stations);
+            switch (opt) {
+            case 'b': members = &zz->setup.included_bssids; break;
+            case 'B': members = &zz->setup.excluded_bssids; break;
+            case 's': members = &zz->setup.included_stations; break;
+            case 'S': members = &zz->setup.excluded_stations; break;
+            default: __builtin_unreachable();
+            }
             zz_members_put_mask(members, mac_addr, mac_mask);
+            break;
+
+        case 'x':
+            if (strcmp(optarg, "b") == 0) {
+                zz->setup.bssids_exclude_first = 1;
+            } else if (strcmp(optarg, "s") == 0) {
+                zz->setup.stations_exclude_first = 1;
+            } else {
+                zz_error(zz, "Invalid argument '%s' for option -%c", optarg, optopt);
+                return 0;
+            }
             break;
 
         case 'w':

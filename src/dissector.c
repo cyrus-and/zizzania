@@ -32,6 +32,31 @@ static void get_ssid(const uint8_t *params, uint32_t length,
     }
 }
 
+static int is_mac_addr_allowed(zz_mac_addr mac_addr, int exclude_first,
+                               const zz_members *include, const zz_members *exclude) {
+    /* when both sets are present */
+    if (!zz_members_is_empty(include) && !zz_members_is_empty(exclude)) {
+        /* operate according to the order */
+        if (exclude_first) {
+            return zz_members_match(include, mac_addr) || !zz_members_match(exclude, mac_addr);
+        } else {
+            return zz_members_match(include, mac_addr) && !zz_members_match(exclude, mac_addr);
+        }
+    }
+    /* when only the include set is present */
+    else if (!zz_members_is_empty(include) && zz_members_is_empty(exclude)) {
+        return zz_members_match(include, mac_addr);
+    }
+    /* when only the exclude set is present */
+    else if (zz_members_is_empty(include) && !zz_members_is_empty(exclude)) {
+        return !zz_members_match(exclude, mac_addr);
+    }
+    /* allowed by default */
+    else {
+        return 1;
+    }
+}
+
 void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
                        const uint8_t *packet) {
     struct ieee80211_radiotap_header *radiotap_header;
@@ -121,16 +146,16 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
 
     /* lookup or create a descriptor for this bss */
     if (zz_bsss_lookup(&zz->bsss, bssid, &bss)) {
-        /* allowed if no constraints are specified or explicitly added */
-        bss->is_allowed = (zz_members_is_empty(&zz->setup.allowed_bssids) ||
-                           zz_members_match(&zz->setup.allowed_bssids, bssid));
+        /* determine if should operate on this bss */
+        bss->is_allowed = is_mac_addr_allowed(bssid, zz->setup.bssids_exclude_first,
+                                              &zz->setup.included_bssids, &zz->setup.excluded_bssids);
     }
 
     /* skip unwanted access points */
     if (!bss->is_allowed) {
         #ifdef DEBUG
         if (!is_beacon) {
-            log_ts("%s @ %s $'%s' - Skipping unwanted BSS traffic", station_str, bssid_str, bss->ssid);
+            log_ts("%s @ %s $'%s' - Skipping excluded BSS traffic", station_str, bssid_str, bss->ssid);
         }
         #endif
         return;
@@ -163,9 +188,9 @@ void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
         return;
     }
 
-    /* skip blacklisted stations */
-    if (zz_members_match(&zz->setup.banned_stations, station)) {
-        log_ts("%s @ %s $'%s' - Skipping banned station", station_str, bssid_str, bss->ssid);
+    /* determine if should operate on this station */
+    if (!is_mac_addr_allowed(station, zz->setup.stations_exclude_first, &zz->setup.included_stations, &zz->setup.excluded_stations)) {
+        log_ts("%s @ %s $'%s' - Skipping excluded station", station_str, bssid_str, bss->ssid);
         return;
     }
 
