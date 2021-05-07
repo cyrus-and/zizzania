@@ -23,9 +23,6 @@
         " || wlan[0] == " ZZ_STRING(ZZ_FCF_QOS_DATA) \
         " || wlan[0] == " ZZ_STRING(ZZ_FCF_BEACON)
 
-/* libpcap to_ms parameter */
-#define READ_TIMEOUT 50
-
 static int create_pcap(zz_handler *zz) {
     char pcap_error_buffer[PCAP_ERRBUF_SIZE];
 
@@ -48,7 +45,6 @@ static int create_pcap(zz_handler *zz) {
             snaplen = zz->setup.output ? MAX_SNAPLEN : MIN_SNAPLEN;
             if (pcap_set_snaplen(zz->pcap, snaplen) != 0 ||
                 pcap_set_promisc(zz->pcap, 1) != 0 ||
-                pcap_set_timeout(zz->pcap, READ_TIMEOUT) ||
                 pcap_set_rfmon(zz->pcap, 1) ||
                 pcap_activate(zz->pcap)) {
                 zz_error(zz, "libpcap: %s", pcap_geterr(zz->pcap));
@@ -150,31 +146,23 @@ static int packet_loop(zz_handler *zz) {
 
     /* start capture loop */
     error = 0;
-    while (!zz->is_done) {
-        const uint8_t *packet;
-        struct pcap_pkthdr *packet_header;
-        switch (pcap_next_ex(zz->pcap, &packet_header, &packet)) {
-            case 0: /* timeout */
-                break; /* recheck flag and possibly start over */
+    switch (pcap_loop(zz->pcap, -1, zz_dissect_packet, (u_char *)zz)) {
+    case 0: /* end of file */
+        zz_log("EOF for '%s'", zz->setup.input);
+        break;
 
-            case 1: /* no problem */
-                zz_dissect_packet(zz, packet_header, packet);
-                break;
+    case -1: /* error */
+        zz_error(zz, "libpcap: %s", pcap_geterr(zz->pcap));
+        error = 1;
+        break;
 
-            case -1: /* error */
-                zz_error(zz, "libpcap: %s", pcap_geterr(zz->pcap));
-                error = zz->is_done = 1;
-                return 0;
-
-            case -2: /* end of file */
-                zz_log("EOF for '%s'", zz->setup.input);
-                zz->is_done = 1;
-                break;
-        }
+    case -2: /* user termination */
+        break;
     }
 
-    /* force the dispatcher to wake up */
-    pthread_kill(dispatcher, SIGTERM);
+    /* notify termination */
+    zz_out("Terminating...");
+    zz->is_done = 1;
 
     /* join dispatcher thread */
     if (pthread_join(dispatcher, (void *)&dispatcher_return) != 0) {

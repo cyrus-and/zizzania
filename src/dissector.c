@@ -57,8 +57,9 @@ static int is_mac_addr_allowed(zz_mac_addr mac_addr, int exclude_first,
     }
 }
 
-void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
+void zz_dissect_packet(u_char *_zz, const struct pcap_pkthdr *packet_header,
                        const uint8_t *packet) {
+    zz_handler *zz = (zz_handler *)_zz;
     struct ieee80211_radiotap_header *radiotap_header;
     struct ieee80211_mac_header *mac_header;
     struct ieee8022_llc_snap_header *llc_snap_header;

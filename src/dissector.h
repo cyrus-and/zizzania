@@ -5,7 +5,7 @@
 
 #include "handler.h"
 
-void zz_dissect_packet(zz_handler *zz, const struct pcap_pkthdr *packet_header,
+void zz_dissect_packet(u_char *_zz, const struct pcap_pkthdr *packet_header,
                        const uint8_t *packet);
 
 #endif
