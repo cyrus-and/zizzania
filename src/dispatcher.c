@@ -19,8 +19,8 @@ static void terminate_pcap_loop(int signum) {
     pcap_breakloop(pcap);
 }
 
-static void *dispatcher(void *arg) {
-    zz_handler *zz = arg;
+static void *dispatcher(void *_zz) {
+    zz_handler *zz = _zz;
     sigset_t set;
     struct itimerval timer;
     int error;
