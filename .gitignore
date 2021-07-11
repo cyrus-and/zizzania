@@ -2,6 +2,8 @@
 /external/
 /Makefile
 /src/zizzania
+.ccls-cache/
 .gdb_history
+compile_commands.json
 *.o
 *.d
