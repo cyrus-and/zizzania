@@ -39,7 +39,7 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
     zz_members *members;
 
     opterr = 0;
-    while (opt = getopt(argc, argv, ":i:c:nd:a:t:r:b:B:s:S:x:w:23gv"), opt != -1) {
+    while (opt = getopt(argc, argv, ":i:c:nd:a:t:r:b:B:s:S:x:w:23gqv"), opt != -1) {
         switch (opt) {
 
         case 'i':
@@ -140,6 +140,10 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
             zz->setup.dump_group_traffic = 1;
             break;
 
+        case 'q':
+            zz->setup.early_quit = 1;
+            break;
+
         case 'v':
             zz->setup.is_verbose = 1;
             break;
@@ -190,6 +194,12 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
     if (zz->setup.is_passive &&
         (n_deauths || killer_max_attempts || killer_interval)) {
         zz_error(zz, "Incompatible options -d, -a, -t with passive mode");
+        return 0;
+    }
+
+    /* warn about early quitting when not live */
+    if (!zz->setup.is_live && zz->setup.early_quit) {
+        zz_error(zz, "Incompatible option -q with live mode");
         return 0;
     }
 
