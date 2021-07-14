@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "handler.h"
+
 #define ZZ_ANSI(codes, str) \
     (zz->setup.is_tty_output ? "\x1b[" codes "m" str "\x1b[0m" : str)
 

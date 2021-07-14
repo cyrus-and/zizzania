@@ -1,3 +1,5 @@
+#include <strings.h>
+
 #include "dissector.h"
 #include "handshake.h"
 #include "ieee802.h"
