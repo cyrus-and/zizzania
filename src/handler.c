@@ -45,7 +45,7 @@ static int create_pcap(zz_handler *zz) {
             snaplen = zz->setup.output ? MAX_SNAPLEN : MIN_SNAPLEN;
             if (pcap_set_snaplen(zz->pcap, snaplen) != 0 ||
                 pcap_set_promisc(zz->pcap, 1) != 0 ||
-                pcap_set_rfmon(zz->pcap, 1) ||
+                (!zz->setup.no_rfmon && pcap_set_rfmon(zz->pcap, 1)) ||
                 pcap_activate(zz->pcap)) {
                 zz_error(zz, "libpcap: %s", pcap_geterr(zz->pcap));
                 return 0;

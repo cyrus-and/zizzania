@@ -39,7 +39,7 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
     zz_members *members;
 
     opterr = 0;
-    while (opt = getopt(argc, argv, ":i:c:nd:a:t:r:b:B:s:S:x:w:23gqv"), opt != -1) {
+    while (opt = getopt(argc, argv, ":i:Mc:nd:a:t:r:b:B:s:S:x:w:23gqv"), opt != -1) {
         switch (opt) {
 
         case 'i':
@@ -47,6 +47,10 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
             zz->setup.input = optarg;
             zz->setup.is_live = (opt == 'i');
             n_inputs++;
+            break;
+
+        case 'M':
+            zz->setup.no_rfmon = 1;
             break;
 
         case 'c':
@@ -184,9 +188,9 @@ int zz_parse_options(zz_handler *zz, int argc, char *argv[]) {
 
     /* warn about live-related options while offline */
     if (!zz->setup.is_live &&
-        (zz->setup.channel > 0 || zz->setup.is_passive ||
+        (zz->setup.no_rfmon || zz->setup.channel > 0 || zz->setup.is_passive ||
          n_deauths || killer_max_attempts || killer_interval)) {
-        zz_error(zz, "Incompatible options -c, -n, -d, -a, -t with offline mode");
+        zz_error(zz, "Incompatible options -M, -c, -n, -d, -a, -t with offline mode");
         return 0;
     }
 

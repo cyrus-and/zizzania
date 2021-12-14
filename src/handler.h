@@ -18,6 +18,7 @@ typedef struct {
         unsigned is_passive:1;
         unsigned is_verbose:1;
         unsigned is_tty_output:1;
+        unsigned no_rfmon:1;
         unsigned dump_group_traffic:1;
         unsigned early_quit:1;
         unsigned bssids_exclude_first:1;
