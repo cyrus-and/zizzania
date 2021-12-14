@@ -8,8 +8,8 @@
 void zz_print_usage() {
     #define LN(x) x "\n"
     fprintf(stderr,
-            LN("zizzania v" ZZ_VERSION " - Automated DeAuth attack")
-            LN("Copyright (c) 2021 Andrea Cardaci <cyrus.and@gmail.com>")
+            LN("zizzania v" ZZ_VERSION " - " ZZ_DESCRIPTION)
+            LN("Copyright (c) " ZZ_YEAR " " ZZ_AUTHOR)
             LN("")
             LN("Usage:")
             LN("")
