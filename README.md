@@ -51,6 +51,12 @@ make -f config.Makefile
 make -j "$(nproc)"
 ```
 
+For macOS:
+```
+make -f config.Makefile
+make -j "$(sysctl -n hw.ncpu)"
+```
+
 ### Installation
 
 The installation process is not mandatory, zizzania can be run from the `src` directory. Just in case:
