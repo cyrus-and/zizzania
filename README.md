@@ -48,7 +48,7 @@ brew install libpcap wget
 
 ```
 make -f config.Makefile
-make -j "$(nproc)"
+make
 ```
 
 ### Installation
