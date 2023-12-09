@@ -4,6 +4,6 @@
 #define ZZ_VERSION "0.3.0"
 #define ZZ_DESCRIPTION "Automated DeAuth attack"
 #define ZZ_AUTHOR "Andrea Cardaci <cyrus.and@gmail.com>"
-#define ZZ_YEAR "2021"
+#define ZZ_YEAR "2023"
 
 #endif
